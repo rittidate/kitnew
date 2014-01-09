@@ -28,4 +28,14 @@ class Unit extends CI_Controller
       $this->load->view('include/footer');
    }
 
+   public function getall(){
+       //$this->load->view('include/header');
+      $sql = "select * FROM kt_product Limit 0, 10";
+      $query = $this->db->query($sql)->result();
+      $this->load->view('include/header');
+      print_r($query);
+      $this->load->view('include/footer');
+      
+   }
+
 }
