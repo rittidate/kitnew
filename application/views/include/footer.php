@@ -1,6 +1,6 @@
    <div id="footer">
       <div class="container">
-        <p class="text-muted">Place sticky footer content here.</p>
+        <p class="text-muted"><i class="fa fa-magic fa-3x"></i> Design by arraieot</p>
       </div>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
