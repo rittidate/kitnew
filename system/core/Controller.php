@@ -31,13 +31,20 @@ class CI_Controller {
 
 	private static $instance;
 
+        private static $varviewer;
+
+        private static $viewerId;
+
+        private static $language;
+
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
 		self::$instance =& $this;
-		
+		$this->varviewer = 'OCID';
+
 		// Assign all the class objects that were instantiated by the
 		// bootstrap file (CodeIgniter.php) to local class variables
 		// so that CI can run as one big super object.
@@ -51,12 +58,46 @@ class CI_Controller {
 		$this->load->initialize();
 		
 		log_message('debug', "Controller Class Initialized");
+
+
+                $this->getUniqueViewerId();
+                
+                $this->headerNavMenu();
 	}
+
+        public function headerNavMenu()
+        {
+            //var_dump($this->viewerId);
+            $language = "thailand";
+            $this->lang->load('menu', $language);
+            $data["home"] = $this->lang->line("home");
+            $data["about"] = $this->lang->line("about");
+            $data["map"] = $this->lang->line("map");
+            $data["user"] = $this->lang->line("user");
+            $data["order"] = $this->lang->line("order");
+            $data["cart"] = $this->lang->line("cart");
+            $data["config"] = $this->lang->line("config");
+            $data["logout"] = $this->lang->line("logout");
+
+            $this->load->view('include/header', $data);
+        }
 
 	public static function &get_instance()
 	{
 		return self::$instance;
 	}
+
+        private function getUniqueViewerId($create = true)
+        {
+            $expire = time()+3600*24*365*10;
+            if (isset($_COOKIE[$this->varviewer])) {
+                $uniqueViewerId = $_COOKIE[$this->varviewer];
+            } else {
+                $uniqueViewerId = md5(uniqid('', true));  // Need to find a way to generate this...
+                @setcookie($this->varviewer, $uniqueViewerId, $expire, '/');
+            }
+            $this->viewerId = $uniqueViewerId;
+        }
 }
 // END Controller class
 

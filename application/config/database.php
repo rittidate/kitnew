@@ -50,7 +50,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
-$db['default']['username'] = 'arraieot';
+//$db['default']['username'] = 'arraieot';
 $db['default']['password'] = 'gueangna';
 //$db['default']['password'] = 'gueangna';
 $db['default']['database'] = 'kitdb_new';

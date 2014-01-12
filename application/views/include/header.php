@@ -34,8 +34,8 @@ padding-top: 70px;
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
+            <li class="active"><a href="#"><?php echo $home; ?></a></li>
+            <li><a href="#about"><?php echo $about; ?></a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
               <a data-toggle="dropdown" class="dropdown-toggle" href="#">Dropdown <b class="caret"></b></a>
@@ -51,18 +51,18 @@ padding-top: 70px;
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> Map</span></a></li>
-            <li><a href="#"><i class="fa fa-user hidden-xs fa-2x"></i><span class="fa fa-user visible-xs"> User</span></a></li>
-            <li><a href="#"><i class="fa fa-clipboard hidden-xs fa-2x"></i><span class="fa fa-clipboard visible-xs"> Order</span></a></li>
-            <li><a href="#"><i class="fa fa-shopping-cart hidden-xs fa-2x"></i><span class="fa fa-shopping-cart visible-xs"> Cart</span></a></li>
+            <li><a href="#"><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> <?php echo $map; ?></span></a></li>
+            <li><a href="#"><i class="fa fa-user hidden-xs fa-2x"></i><span class="fa fa-user visible-xs"> <?php echo $user; ?></span></a></li>
+            <li><a href="#"><i class="fa fa-clipboard hidden-xs fa-2x"></i><span class="fa fa-clipboard visible-xs"> <?php echo $order; ?></span></a></li>
+            <li><a href="#"><i class="fa fa-shopping-cart hidden-xs fa-2x"></i><span class="fa fa-shopping-cart visible-xs"> <?php echo $cart; ?></span></a></li>
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-cogs hidden-xs fa-2x"><b class="caret"></b></i><span class="fa fa-cogs visible-xs"> Config<b class="caret"></b></span></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-cogs hidden-xs fa-2x"><b class="caret"></b></i><span class="fa fa-cogs visible-xs"> <?php echo $config; ?><b class="caret"></b></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="#">Action</a></li>
                     <li><a href="#">Another action</a></li>
                     <li><a href="#">Something else here</a></li>
                     <li class="divider"></li>
-                    <li><a href="#">Log out</a></li>
+                    <li><a href="#"><?php echo $logout; ?></a></li>
                 </ul>
             </li>
 

@@ -1,12 +1,22 @@
 <?php if (!defined('BASEPATH')) die();
 class Home extends Main_Controller {
 
-   public function index()
-	{
-          $this->load->view('include/header');
-          $this->load->view('home');
-          $this->load->view('include/footer');
-	}
+    public function  __construct()
+    {
+        parent::__construct();
+    }
+
+    public function index()
+    {
+      
+      $this->load->view('home');
+      $this->load->view('include/footer');
+    }
+    
+    public function __destruct() {
+      
+   }
+
 
 }
 
