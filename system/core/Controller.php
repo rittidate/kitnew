@@ -62,42 +62,66 @@ class CI_Controller {
 
                 $this->getUniqueViewerId();
                 
-                $this->headerNavMenu();
+				$this->headerMain();
+                $this->navbarMenu();
+				$this->modalHeaderMenu();
+				$this->advertiserMain();
+				$this->sidebarMenu();
+	}
+	
+	public function headerMain()
+	{
+		$this->load->view('include/header');
 	}
 
-        public function headerNavMenu()
-        {
-            //var_dump($this->viewerId);
-            $language = "thailand";
-            $this->lang->load('menu', $language);
-            $data["home"] = $this->lang->line("home");
-            $data["about"] = $this->lang->line("about");
-            $data["map"] = $this->lang->line("map");
-            $data["user"] = $this->lang->line("user");
-            $data["order"] = $this->lang->line("order");
-            $data["cart"] = $this->lang->line("cart");
-            $data["config"] = $this->lang->line("config");
-            $data["logout"] = $this->lang->line("logout");
+    public function navbarMenu()
+    {
+        $language = "thailand";
+        $this->lang->load('menu', $language);
+        $data["home"] = $this->lang->line("home");
+        $data["about"] = $this->lang->line("about");
+        $data["map"] = $this->lang->line("map");
+        $data["user"] = $this->lang->line("user");
+        $data["order"] = $this->lang->line("order");
+        $data["cart"] = $this->lang->line("cart");
+        $data["config"] = $this->lang->line("config");
+        $data["logout"] = $this->lang->line("logout");
 
-            $this->load->view('include/header', $data);
-        }
+        $this->load->view('include/navbar', $data);
+    }
+	
+	public function advertiserMain()
+	{
+		$this->load->view('include/advertiser');
+	}
+	
+	
+	public function modalHeaderMenu()
+	{
+		$this->load->view('include/modal');
+	}
 
+	public function sidebarMenu()
+	{
+		$this->load->view('include/sidebar');
+	}
+	
 	public static function &get_instance()
 	{
 		return self::$instance;
 	}
 
-        private function getUniqueViewerId($create = true)
-        {
-            $expire = time()+3600*24*365*10;
-            if (isset($_COOKIE[$this->varviewer])) {
-                $uniqueViewerId = $_COOKIE[$this->varviewer];
-            } else {
-                $uniqueViewerId = md5(uniqid('', true));  // Need to find a way to generate this...
-                @setcookie($this->varviewer, $uniqueViewerId, $expire, '/');
-            }
-            $this->viewerId = $uniqueViewerId;
+    private function getUniqueViewerId($create = true)
+    {
+        $expire = time()+3600*24*365*10;
+        if (isset($_COOKIE[$this->varviewer])) {
+            $uniqueViewerId = $_COOKIE[$this->varviewer];
+        } else {
+            $uniqueViewerId = md5(uniqid('', true));  // Need to find a way to generate this...
+            @setcookie($this->varviewer, $uniqueViewerId, $expire, '/');
         }
+        $this->viewerId = $uniqueViewerId;
+    }
 }
 // END Controller class
 

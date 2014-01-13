@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://kittivate.com/';
-//$config['base_url']	= 'http://kitnew.local/';
+//$config['base_url']	= 'http://kittivate.com/';
+$config['base_url']	= 'http://kitnew.local/';
 //$config['base_url']	= 'http://cint.kittivate.com/';
 
 /*

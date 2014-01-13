@@ -52,7 +52,6 @@ $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
 //$db['default']['username'] = 'arraieot';
 $db['default']['password'] = 'gueangna';
-//$db['default']['password'] = 'gueangna';
 $db['default']['database'] = 'kitdb_new';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
