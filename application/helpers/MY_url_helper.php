@@ -17,8 +17,10 @@ function base_url($uri = null)
    $CI =& get_instance();
 
    $cdn = $CI->config->item('cdn_url');
-   if (!empty($cdn))
-      return $cdn . $uri;
+   if(!empty($uri)){
+        if (!empty($cdn))
+           return $cdn . $uri;
+   }
 
    return $CI->config->base_url($uri);
 }
