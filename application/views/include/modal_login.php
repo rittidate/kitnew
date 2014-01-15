@@ -36,16 +36,17 @@
                 </div>
             </div>
         </form>
-
+            <!--
             <div class="row">
                 <div class="form-group col-md-8 col-md-offset-2">
-                    <a href="<?php echo base_url().'/login/twitter' ?>" class="btn btn-info col-md-12 col-xs-12"><i class="fa fa-twitter fa-2x"></i> Login with Twitter</a>
+                    <a href="<?php echo base_url().'login/twitter' ?>" class="btn btn-info col-md-12 col-xs-12"><i class="fa fa-twitter fa-2x"></i> Login with Twitter</a>
                 </div>
             </div>
+            -->
 
             <div class="row">
                 <div class="form-group col-md-8 col-md-offset-2">
-                    <a href="<?php echo base_url().'/login/facebook' ?>" class="btn btn-primary col-md-12 col-xs-12"><i class="fa fa-facebook-square fa-2x"></i> Login with Facebook</a>
+                    <a href="<?php echo base_url().'login/facebook' ?>" class="btn btn-primary col-md-12 col-xs-12"><i class="fa fa-facebook-square fa-2x"></i> Login with Facebook</a>
                 </div>
             </div>
       </div>

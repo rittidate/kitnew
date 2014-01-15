@@ -1,21 +1,27 @@
 <?php
 
-class Login extends CI_Controller
+class Language extends CI_Controller
 {
 	public $user_facebook = null;
 
     public function __construct()
     {
         parent::__construct();
-        $this->load->library('fb');
-        $this->user_facebook = $this->fb->sdk->getUser();
-		//parse_str($_SESSION['QUERY_STRING'], $_REQUEST);
     }
 
    public function index()
    {
-
-		
+        if(empty($this->session['language']) || $this->session['language'] == 'english'){
+            $this->session['language'] = 'thailand';
+        }else if($this->session['language'] == 'thailand'){
+            $this->session['language'] = 'english';
+        }
+        $update = array(
+            'sessiondata' => serialize($this->session),
+            'lastused' => date('Y-m-d H:i:s')
+       );
+       $this->db->update('kt_session', $update, array('ocid' => $_COOKIE['OCID']));
+        redirect(base_url());
    }
 
    public function facebook(){
@@ -56,7 +62,7 @@ class Login extends CI_Controller
    public function form(){
         var_dump($_POST);
    }
-   
+
    public function logout(){
 
       $data = array();

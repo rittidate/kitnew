@@ -37,8 +37,9 @@ class CI_Controller {
 
         private static $language;
 		
-		public $user_facebook = null;
-
+        public $user_facebook = null;
+        
+        public $session = array();
 	/**
 	 * Constructor
 	 */
@@ -60,15 +61,15 @@ class CI_Controller {
 		$this->load->initialize();
 		
 		$this->load->library('fb');
-        $this->user_facebook = $this->fb->sdk->getUser();
+                $this->user_facebook = $this->fb->sdk->getUser();
 		
 		log_message('debug', "Controller Class Initialized");
 
 
-        $this->getUniqueViewerId();
+                $this->getUniqueViewerId();
                 
 		$this->headerMain();
-        $this->navbarMenu();
+                $this->navbarMenu();
 		$this->modalHeaderMenu();
 		$this->advertiserMain();
 		$this->sidebarMenu();
@@ -81,7 +82,13 @@ class CI_Controller {
 
     public function navbarMenu()
     {
-        $language = "thailand";
+        //$language = "thailand";
+        if(empty($this->session['language'])){
+            $language = 'english';
+        }else{
+            $language = $this->session['language'];
+        }
+        
         $this->lang->load('menu', $language);
         $data["home"] = $this->lang->line("home");
         $data["about"] = $this->lang->line("about");
@@ -90,27 +97,13 @@ class CI_Controller {
         $data["order"] = $this->lang->line("order");
         $data["cart"] = $this->lang->line("cart");
         $data["config"] = $this->lang->line("config");
-        $data["logout"] = $this->lang->line("logout");
-		
-		
+        $data["logout"] = '';
 		
         if($this->user_facebook){
-          try {
-                   $user_profile = $this->fb->sdk->api('/me'); // เป็นการเรียก Method /me ซึ่งเป็นข้อมูลเกี่ยวกับผู้ใช้ท่านนั้นๆ ที่ได้ทำการ Login
-                   echo "<br/>";
-                   print_r($user_profile);
-                   //echo $user_profile['email'];
-                   /*
-                   $_SESSION['LOGIN_FB_ID'] = $FB_ME_INFO["id"];
-                   $_SESSION['LOGIN_FB_FULLNAME'] = $FB_ME_INFO["name"];
-                   header("Location:./index.php");
-                   */
-          } catch(FacebookApiException $e) {
-
-               echo $e;  // print Error
-               $this->user_facebook = null;
-               //header("Location:./index.php?Login=fail");
-          }
+            $logout_facebook = $this->fb->sdk->getLogoutUrl(array("next"=>base_url()."login/logout/"));
+            $logout = "<li class='divider'></li>";
+            $logout .= "<li><a href='".$logout_facebook."'>".$this->lang->line("logout")."</a></li>";
+            $data["logout"] = $logout;
         }
 
         $this->load->view('include/navbar', $data);
@@ -124,7 +117,19 @@ class CI_Controller {
 	
 	public function modalHeaderMenu()
 	{
-		$this->load->view('include/modal');
+            if(empty($this->session['user'])){
+		$this->load->view('include/modal_login');
+            }else{
+               $user = $this->db->where('id', $this->session['user'])
+                               ->get('kt_customer')->row();
+
+               $data["id"] = $user->id;
+               $data["firstname"] = $user->firstname;
+               $data["lastname"] = $user->lastname;
+               
+               $this->load->view('include/modal_user', $data);
+
+            }
 	}
 
 	public function sidebarMenu()
@@ -146,7 +151,28 @@ class CI_Controller {
             $uniqueViewerId = md5(uniqid('', true));  // Need to find a way to generate this...
             @setcookie($this->varviewer, $uniqueViewerId, $expire, '/');
         }
+
         $this->viewerId = $uniqueViewerId;
+
+        $this->getSession($uniqueViewerId);
+    }
+
+    private function getSession($uniqueViewerId = null)
+    {
+       $query = $this->db->having('ocid', $uniqueViewerId)->get('kt_session');
+       if($query->num_rows == 0){
+           $serial = array('language' => 'english');
+           $data = array(
+                'ocid' => $uniqueViewerId,
+                'sessiondata' => serialize($serial),
+                'lastused' => date('Y-m-d H:i:s')
+           );
+            $this->db->insert('kt_session', $data);
+       }else{
+            $session = $this->db->where('ocid', $_COOKIE[$this->varviewer])
+                               ->get('kt_session')->row();
+            $this->session = unserialize($session->sessiondata);
+       }
     }
 }
 // END Controller class
