@@ -8,7 +8,7 @@ class Login extends CI_Controller
     {
         parent::__construct();
         $this->load->library('fb');
-         $this->user_facebook = $this->fb->sdk->getUser();
+        $this->user_facebook = $this->fb->sdk->getUser();
 		//parse_str($_SESSION['QUERY_STRING'], $_REQUEST);
     }
 
@@ -19,10 +19,6 @@ class Login extends CI_Controller
    }
 
    public function facebook(){
-        
-
-       
-
         if($this->user_facebook){
           try {
                    $user_profile = $this->fb->sdk->api('/me'); // เป็นการเรียก Method /me ซึ่งเป็นข้อมูลเกี่ยวกับผู้ใช้ท่านนั้นๆ ที่ได้ทำการ Login

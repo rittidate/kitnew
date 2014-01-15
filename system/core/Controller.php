@@ -36,6 +36,8 @@ class CI_Controller {
         private static $viewerId;
 
         private static $language;
+		
+		public $user_facebook = null;
 
 	/**
 	 * Constructor
@@ -57,16 +59,19 @@ class CI_Controller {
 
 		$this->load->initialize();
 		
+		$this->load->library('fb');
+        $this->user_facebook = $this->fb->sdk->getUser();
+		
 		log_message('debug', "Controller Class Initialized");
 
 
-                $this->getUniqueViewerId();
+        $this->getUniqueViewerId();
                 
-				$this->headerMain();
-                $this->navbarMenu();
-				$this->modalHeaderMenu();
-				$this->advertiserMain();
-				$this->sidebarMenu();
+		$this->headerMain();
+        $this->navbarMenu();
+		$this->modalHeaderMenu();
+		$this->advertiserMain();
+		$this->sidebarMenu();
 	}
 	
 	public function headerMain()
@@ -86,6 +91,27 @@ class CI_Controller {
         $data["cart"] = $this->lang->line("cart");
         $data["config"] = $this->lang->line("config");
         $data["logout"] = $this->lang->line("logout");
+		
+		
+		
+        if($this->user_facebook){
+          try {
+                   $user_profile = $this->fb->sdk->api('/me'); // เป็นการเรียก Method /me ซึ่งเป็นข้อมูลเกี่ยวกับผู้ใช้ท่านนั้นๆ ที่ได้ทำการ Login
+                   echo "<br/>";
+                   print_r($user_profile);
+                   //echo $user_profile['email'];
+                   /*
+                   $_SESSION['LOGIN_FB_ID'] = $FB_ME_INFO["id"];
+                   $_SESSION['LOGIN_FB_FULLNAME'] = $FB_ME_INFO["name"];
+                   header("Location:./index.php");
+                   */
+          } catch(FacebookApiException $e) {
+
+               echo $e;  // print Error
+               $this->user_facebook = null;
+               //header("Location:./index.php?Login=fail");
+          }
+        }
 
         $this->load->view('include/navbar', $data);
     }
