@@ -16,7 +16,7 @@
                     <div class="form-group col-md-8 col-md-offset-2">
                         <div class="input-group">
                               <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                              <input type="email" name="email" class="form-control" placeholder="E-mail">
+                              <input type="email" name="email" class="form-control" placeholder="E-mail" required>
                             </div>
                     </div>
             </div>
@@ -25,7 +25,7 @@
                     <div class="form-group col-md-8 col-md-offset-2">
                         <div class="input-group">
                               <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                              <input type="password" name="password" class="form-control" placeholder="Password">
+                              <input type="password" name="password" class="form-control" placeholder="Password" required>
                         </div>
                     </div>
             </div>

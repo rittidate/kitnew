@@ -16,7 +16,6 @@
 */
 //$config['base_url']	= 'http://kittivate.com/';
 $config['base_url']	= 'http://kitnew.local/';
-//$config['base_url']	= 'http://cint.kittivate.com/';
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +32,7 @@ $config['base_url']	= 'http://kitnew.local/';
 |
 */
 $config['cdn_url']	= 'http://asset.kittivate.com/kittivate/';
+//$config['cdn_url']	= 'http://kitnew.local/';
 
 /*
 |--------------------------------------------------------------------------
