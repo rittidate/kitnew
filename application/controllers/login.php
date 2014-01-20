@@ -1,24 +1,17 @@
-<?php
+<?php if (!defined('BASEPATH')) die();
+class Login extends Main_Controller {
 
-class Login extends CI_Controller
-{
-	public $user_facebook = null;
-
-    public function __construct()
+    function  __construct()
     {
         parent::__construct();
-        $this->load->library('fb');
-        $this->user_facebook = $this->fb->sdk->getUser();
-		//parse_str($_SESSION['QUERY_STRING'], $_REQUEST);
     }
 
-   public function index()
-   {
+    public function index()
+    {
 
-		
-   }
+    }
 
-   public function facebook(){
+     public function facebook(){
         if($this->user_facebook){
           try {
                    $user_profile = $this->fb->sdk->api('/me'); // เป็นการเรียก Method /me ซึ่งเป็นข้อมูลเกี่ยวกับผู้ใช้ท่านนั้นๆ ที่ได้ทำการ Login
@@ -49,7 +42,7 @@ class Login extends CI_Controller
                         'lastused' => date('Y-m-d H:i:s')
                    );
                    $this->db->update('kt_session', $update, array('ocid' => $_COOKIE[$this->varviewer]));
-                   
+
           } catch(FacebookApiException $e) {
                echo $e;  // print Error
                $this->user_facebook = null;
@@ -63,11 +56,7 @@ class Login extends CI_Controller
         }
    }
 
-   public function twitter(){
-        var_dump($_POST);
-   }
-
-   public function form(){
+  public function form(){
         $email = trim($_POST["email"]);
         $password = md5(trim($_POST["password"]));
         $have_row = $this->db->having('email', $email)->having('password', $password)->get('kt_customer');
@@ -86,7 +75,7 @@ class Login extends CI_Controller
         }
 
    }
-   
+
    public function logout(){
       unset($this->session['user']);
       unset($this->session['facebook_id']);
@@ -99,5 +88,7 @@ class Login extends CI_Controller
        redirect(base_url());
    }
 
-
 }
+
+/* End of file frontpage.php */
+/* Location: ./application/controllers/frontpage.php */

@@ -1,23 +1,17 @@
 <?php if (!defined('BASEPATH')) die();
-class Home extends CI_Controller {
+class Home extends Main_Controller {
 
-    public function  __construct()
+    function  __construct()
     {
         parent::__construct();
         $this->loadHeader();
     }
 
-    public function index()
+   public function index()
     {
-      
-      $this->load->view('home');
-      $this->load->view('include/footer');
+       $this->load->view('home');
+       $this->load->view('include/footer');
     }
-    
-    public function __destruct() {
-      
-   }
-
 
 }
 

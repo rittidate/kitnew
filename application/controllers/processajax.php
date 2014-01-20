@@ -1,10 +1,7 @@
-<?php
-
-class Processajax extends CI_Controller
-{
-    public $ci;
+<?php if (!defined('BASEPATH')) die();
+class Processajax extends Main_Controller {
     
-    public function __construct()
+    function __construct()
     {
         parent::__construct();
     }

@@ -61,8 +61,6 @@ var Frontpage = function()
 	 return exports;
 }
 
-
-
 /**
  * To initialize our Frontpage class, we need
  * to define it into a Javascript variable like

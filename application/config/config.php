@@ -14,8 +14,7 @@
 | path to your installation.
 |
 */
-//$config['base_url']	= 'http://kittivate.com/';
-$config['base_url']	= 'http://kitnew.local/';
+$config['base_url']	= 'http://www.kittivate.com';
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +31,6 @@ $config['base_url']	= 'http://kitnew.local/';
 |
 */
 $config['cdn_url']	= 'http://asset.kittivate.com/kittivate/';
-//$config['cdn_url']	= 'http://kitnew.local/';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +42,7 @@ $config['cdn_url']	= 'http://asset.kittivate.com/kittivate/';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '';
+$config['index_page'] = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -242,7 +240,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'LOGIN_FB_ID';
+$config['encryption_key'] = '';
 
 /*
 |--------------------------------------------------------------------------
