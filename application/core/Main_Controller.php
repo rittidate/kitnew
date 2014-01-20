@@ -133,8 +133,8 @@ class Main_Controller extends MY_Controller
            $data["id"] = $user->id;
            $data["firstname"] = $user->firstname;
            $data["lastname"] = $user->lastname;
-           $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), $user->salutation, 'class="form-control" id="salutation"');
-           $data["gender"] = form_dropdown('gender', $this->kv->getGender(), $user->gender, 'class="form-control" id="gender"');
+           $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), $user->salutation, 'class="form-control" id="user_salutation"');
+           $data["gender"] = form_dropdown('gender', $this->kv->getGender(), $user->gender, 'class="form-control" id="user_gender"');
            $data["birth"] = $user->birth;
            $data["address1"] = $user->address1;
            $data["address2"] = $user->address2;
@@ -142,7 +142,7 @@ class Main_Controller extends MY_Controller
            $data["address4"] = $user->address4;
            $data["city"] = $user->city;
            $data["state"] = $user->state;
-           $data["country"] = form_dropdown('country', $this->kv->getCountry(), $user->country, 'class="form-control" id="country"');
+           $data["country"] = form_dropdown('country', $this->kv->getCountry(), $user->country, 'class="form-control" id="user_country"');
            $data["zipcode"] = $user->zipcode;
            $data["mobile"] = $user->mobile;
            $data["telephone"] = $user->telephone;
