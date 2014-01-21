@@ -45,6 +45,50 @@ class Processajax extends Main_Controller {
 
     }
 
+    public function saveUser(){
+        $firstname = $_REQUEST['firstname'];
+        $lastname = $_REQUEST['lastname'];
+        $birth = $_REQUEST['birth'];
+        $address1 = $_REQUEST['address1'];
+        $address2 = $_REQUEST['address2'];
+        $address3 = $_REQUEST['address3'];
+        $address4 = $_REQUEST['address4'];
+        $city = $_REQUEST['city'];
+        $state = $_REQUEST['state'];
+        $country = $_REQUEST['country'];
+        $salutation = $_REQUEST['salutation'];
+        $gender = $_REQUEST['gender'];
+        $zipcode = $_REQUEST['zipcode'];
+        $mobile = $_REQUEST['mobile'];
+        $telephone = $_REQUEST['telephone'];
+        $telephone_ext = $_REQUEST['telephone_ext'];
+        $fax = $_REQUEST['fax'];
+        $fax_ext = $_REQUEST['fax_ext'];
+
+        $update = array(
+                    'firstname' => $firstname,
+                    'lastname' => $lastname,
+                    'birth' => $birth,
+                    'address1' => $address1,
+                    'address2' => $address2,
+                    'address3' => $address3,
+                    'address4' => $address4,
+                    'city' => $city,
+                    'state' => $state,
+                    'country' => $country,
+                    'salutation' => $salutation,
+                    'gender' => $gender,
+                    'zipcode' => $zipcode,
+                    'mobile' => $mobile,
+                    'telephone' => $telephone,
+                    'telephone_ext' => $telephone_ext,
+                    'fax' => $fax,
+                    'fax_ext' => $fax_ext
+                );
+       $this->db->update('kt_customer', $update, array('id' => $this->session['user']));
+
+    }
+
     public function getAutoState(){
             $keyword = $_REQUEST['keyword'];
             $country = $_REQUEST['country'];

@@ -15,10 +15,51 @@
 <script>
 function modelUser(){
     var thisClass = this;
-    var urlini = 'processajax/'
+    var urlini = 'processajax/';
+    var formId = $("#userModalForm");
 
     this.saveData = function(){
+        var odata = {};
+        var url = urlini+ 'saveUser';
+
+        odata = thisClass.oData(odata);
+        $.post(url,odata,
+                function(result){
+                    $('#userModal').modal('hide')
+                });
         
+    }
+
+    this.oData = function(odata){
+        $("[id^='user_']").each(function(){
+            var attrName = $(this).attr("name");
+            var thisType = $(this).attr("type");
+
+            var thisVal;
+            if(thisType == 'checkbox'){
+                if($(this).prop('checked')){
+                        thisVal = 'Y';
+                }else{
+                        thisVal = 'N';
+                }
+            }else{
+                thisVal = $(this).val();
+            }
+
+            if(attrName !== undefined){
+                var data = {};
+                if(thisVal !== null){
+                    if(typeof thisVal == 'object'){
+                            data[attrName] = thisClass.objToStr(thisVal);
+                    }else{
+                            data[attrName] = thisVal;
+                    }
+                }
+            }
+            $.extend(odata, data);
+        })
+        
+        return odata;
     }
 
     this.getAutoCity = function(add){
@@ -77,7 +118,7 @@ function modelUser(){
     }
 
         this.initValidateForm = function(){
-		  $("#user_modal_form").validate({
+		  formId.validate({
 		    rules: {
 		      firstname:{
 		      	required: true
@@ -113,9 +154,15 @@ function modelUser(){
 		  });
     }
 
+    this.resetValidatForm = function(){
+            var validator = formId.validate();
+            validator.resetForm();
+            $(".error").removeClass('error');
+    }
+
     this.initValidateFormEvent = function(){
             thisClass.submitForm = true;
-            $("#user_modal_form").validate().form();
+            formId.validate().form();
     }
 
     this.initControl = function(){
@@ -138,11 +185,20 @@ function modelUser(){
         });
 
         $("#user_submit").click(function() {
-        	thisClass.initValidateFormEvent();
+            thisClass.initValidateFormEvent();
             if(thisClass.submitForm){
-        		thisClass.saveData();
-    		}
+                thisClass.saveData();
+            }
+            return false;
     	});
+
+        $("#userModal").click(function(){
+            thisClass.resetValidatForm();
+        });
+
+        formId.submit(function(){
+           return false;
+        });
 
         thisClass.initValidateForm();
     }

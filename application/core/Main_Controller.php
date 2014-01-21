@@ -161,6 +161,23 @@ class Main_Controller extends MY_Controller
 
     public function sidebarMenu()
     {
-            $this->load->view('include/sidebar');
+        $SQL = "select name, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null
+                union
+                select name, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                and parentid in (select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null)";
+
+        $result = $this->db->query($SQL)->result();
+        $data = array();
+        foreach($result as $row){
+            if($row->parentid == ""){
+                $data['root'][$row->id]['id'] = $row->id;
+                $data['root'][$row->id]['name'] = $row->name;
+            }else{
+                $data['parent'][$row->parentid][$row->id]['id'] = $row->id;
+                $data['parent'][$row->parentid][$row->id]['name'] = $row->name;
+                $data['parent'][$row->parentid][$row->id]['count'] = $this->db->select('*')->from('kt_menu_product')->where('parentid', $row->id)->where('is_active', 'Y')->where('is_delete', 'N')->count_all_results();
+            }
+        }
+        $this->load->view('include/sidebar', $data);
     }
 }

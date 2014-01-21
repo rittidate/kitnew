@@ -8,9 +8,7 @@
         <h4 class="modal-title" id="myModalLabel">Profile</h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal" id="user_modal_form" role="form">
-
-
+        <form class="form-horizontal" id="userModalForm" role="form">
             <div class="form-group">
                 <label for="firstname" class="col-sm-3 control-label text-right"><?php echo $label_salutation; ?></label>
                 <div class="col-sm-8">
