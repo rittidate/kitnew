@@ -15,6 +15,13 @@
    <link href="<?php echo base_url('assets/datepicker/css/datepicker.css') ?>" rel="stylesheet">
    <link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet">
 
+   <script src="<?php echo base_url('assets/jqui/js/jquery-1.9.1.js') ?>"></script>
+   <!--<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.min.js"></script>-->
+   <script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
+   <script src="<?php echo base_url('assets/jqui/js/jquery-ui-1.10.3.custom.min.js') ?>"></script>
+   <script src="<?php echo base_url('assets/jqvalidate/jquery.validate.js') ?>"></script>
+   <script src="<?php echo base_url('assets/js/custom.js') ?>"></script>
+
 </head>
 <style>
 body {

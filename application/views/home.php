@@ -1,6 +1,38 @@
+<script>
+function queryProduct(){
+    var thisClass = this;
+    var urlini = 'processajax/';
+    
+    this.buildMenuStep3 = function(id){
+        var url = urlini+ 'buildMenuStep3';
+        $.getJSON( url, {  id: id },
+            function(result){
+                console.log(result);
+
+               // $("#user_zipcode").val(result.zipcode);
+        });
+    }
+
+    this.iniControl = function(){
+        $(".menuStep2Click").click(function(){
+            var id = $(this).data('id');
+            thisClass.buildMenuStep3(id);
+        });
+    }
+
+
+    thisClass.iniControl();
+}
+</script>
+<script>
+        $(document).ready(function() {
+                var qp = new queryProduct();
+        });
+</script>
+
 <!-- menu step 3 -->
 <div class="row">
-	<ul class="nav nav-tabs hidden-xs">
+	<ul class="nav nav-tabs hidden-xs menuStep3">
 	  <li class="active"><a data-toggle="tab" href="#tab_a">Tab A</a></li>
 	  <li class=""><a data-toggle="tab" href="#tab_b">Tab B</a></li>
 	  <li class=""><a data-toggle="tab" href="#tab_c">Tab C</a></li>

@@ -146,4 +146,25 @@ class Processajax extends Main_Controller {
         echo json_encode($response);
     }
 
+    //function product
+
+    public function buildMenuStep3(){
+        $id = $_REQUEST['id'];
+
+        $SQL = "select name, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
+                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                    and parentid in (select id from kt_menu_product  WHERE is_delete = 'N'  and is_active = 'Y' and parentid is null) )
+                order by parentid,id";
+        $result = $this->db->query($SQL)->result();
+        $data = array();
+        $i=0;
+        foreach($result as $value){
+            $response->rows[$i]['id']= $value->id;
+            $response->rows[$i]['name']= $value->name;
+            $i++;
+        }
+
+        echo json_encode($response);
+    }
+
 }

@@ -13,7 +13,7 @@
                                     
                                     <ul id="collapse<?php echo $item['id'];?>" class="panel-collapse collapse list-group">
                                         <?php foreach ($parent[$item['id']] as $item2):?>
-                                            <li class="list-group-item"><a href="#<?php echo $item2['id'];?>"><?php echo $item2['name'];?><span class="badge pull-right"><?php echo $item2['count'];?></span></a></li>
+                                        <li class="list-group-item"><a class="menuStep2Click" data-id="<?php echo $item2['id'];?>" href="#<?php echo $item2['id'];?>"><?php echo $item2['name'];?><span class="badge pull-right"><?php echo $item2['count'];?></span></a></li>
                                         <?php endforeach;?>
 				    </ul>
                                     
