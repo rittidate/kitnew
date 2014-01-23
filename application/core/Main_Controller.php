@@ -85,6 +85,7 @@ class Main_Controller extends MY_Controller
         $data["order"] = $this->lang->line("order");
         $data["cart"] = $this->lang->line("cart");
         $data["config"] = $this->lang->line("config");
+        $data["profile"] = '';
         $data["logout"] = '';
 
         if(!empty($this->session['user']) && $this->user_facebook){
@@ -92,11 +93,16 @@ class Main_Controller extends MY_Controller
             $logout = "<li class='divider'></li>";
             $logout .= "<li><a href='".$logout_facebook."'>".$this->lang->line("logout")."</a></li>";
             $data["logout"] = $logout;
+			if($this->user_facebook){
+				$data["profile"] = '<li><a href="#" data-toggle="modal" data-target="#userModal"><img src="http://graph.facebook.com/'.$this->session['facebook_id'].'/picture" height="50" width="50 " class="img-circle"></a></li>';
+			}
         }else if(!empty($this->session['user'])){
             $logout = "<li class='divider'></li>";
             $logout .= "<li><a href='".base_url()."login/logout/"."'>".$this->lang->line("logout")."</a></li>";
             $data["logout"] = $logout;
         }
+		
+		
 
         $this->load->view('include/navbar', $data);
     }

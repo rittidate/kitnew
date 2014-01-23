@@ -39,6 +39,7 @@
                     <?php echo $logout; ?>
                 </ul>
             </li>
+            <?php echo $profile; ?>
 
           </ul>
         </div><!--/.nav-collapse -->
