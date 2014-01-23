@@ -22,8 +22,8 @@
                         </div>
 				
                         <div class="form-group visible-xs">
-                          <label class="control-label" for="menu_step_1">Menu Step 1 Select</label>
-                          <select class="form-control" id="menu_step_1">
+                          <label class="control-label" for="menuStep1Select">Menu Step 1 Select</label>
+                          <select class="form-control" id="menuStep1Select">
                               <?php foreach ($root as $item):?>
                               <option value="<?php echo $item['id'];?>"><?php echo $item['name'];?></option>
                               <?php endforeach;?>
@@ -31,8 +31,8 @@
                         </div>
 
                         <div class="form-group visible-xs">
-                          <label class="control-label" for="menu_step_2">Menu Step 2 Select</label>
-                          <select class="form-control" id="menu_step_2"></select>
+                          <label class="control-label" for="menuStep2Select">Menu Step 2 Select</label>
+                          <select class="form-control" id="menuStep2Select"></select>
                         </div>
       		</div>
       		<div class="col-md-9">

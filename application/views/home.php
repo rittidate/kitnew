@@ -3,20 +3,46 @@ function queryProduct(){
     var thisClass = this;
     var urlini = 'processajax/';
     
-    this.buildMenuStep3 = function(id){
+    this.buildMenuStep3Click = function(id){
         var url = urlini+ 'buildMenuStep3';
+        var html = '';
         $.getJSON( url, {  id: id },
             function(result){
-                console.log(result);
-
-               // $("#user_zipcode").val(result.zipcode);
+            	
+            	$(".menuStep3 li").remove();
+                $.each(result.rows, function(ini, val){
+                	if(ini == 0){
+                     	html += '<li class="active"><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
+                    }else{
+                    	html += '<li class=""><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
+                    }
+                });
+                $(".menuStep3").append(html);
+                
+				//menu event
+        });
+    }
+    
+    this.buildMenuStep3Select = function(id){
+        var url = urlini+ 'buildMenuStep3';
+        var html = '';
+        $.getJSON( url, {  id: id },
+            function(result){
+            	
+            	$("#menuStep3Select option").remove();
+                $.each(result.rows, function(ini, val){	
+            		html += '<option value="'+val.id+'">'+val.name+'</option>';
+                });
+                $("#menuStep3Select").append(html);
+                
+				//menu event
         });
     }
 
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
             var id = $(this).data('id');
-            thisClass.buildMenuStep3(id);
+            thisClass.buildMenuStep3Click(id);
         });
     }
 
@@ -33,15 +59,11 @@ function queryProduct(){
 <!-- menu step 3 -->
 <div class="row">
 	<ul class="nav nav-tabs hidden-xs menuStep3">
-	  <li class="active"><a data-toggle="tab" href="#tab_a">Tab A</a></li>
-	  <li class=""><a data-toggle="tab" href="#tab_b">Tab B</a></li>
-	  <li class=""><a data-toggle="tab" href="#tab_c">Tab C</a></li>
-	  <li class=""><a data-toggle="tab" href="#tab_d">Tab D</a></li>
 	</ul>
 	<div class="container">
 	<div class="form-group visible-xs">
 	  <label class="control-label" for="menu_step_3">Menu Step 3 Select</label>
-	  <select class="form-control" id="menu_step_3"></select>
+	  <select class="form-control" id="menuStep3Select"></select>
 	</div>
 	</div>
 </div>
