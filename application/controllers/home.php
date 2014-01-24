@@ -10,6 +10,7 @@ class Home extends Main_Controller {
    public function index()
     {
        $this->load->view('home');
+	   $this->load->view('include/modal_image');
        $this->load->view('include/footer');
     }
 

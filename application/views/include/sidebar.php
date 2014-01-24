@@ -32,7 +32,11 @@
 
                         <div class="form-group visible-xs">
                           <label class="control-label" for="menuStep2Select">Menu Step 2 Select</label>
-                          <select class="form-control" id="menuStep2Select"></select>
+                          <select class="form-control" id="menuStep2Select">
+                          	    <?php foreach ($parent[1] as $item2):?>
+                                 <option value="<?php echo $item2['id'];?>"><?php echo $item2['name'];?></option>
+                          		<?php endforeach;?>
+                          </select>
                         </div>
       		</div>
       		<div class="col-md-9">

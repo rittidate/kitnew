@@ -148,19 +148,97 @@ class Processajax extends Main_Controller {
 
     //function product
 
-    public function buildMenuStep3(){
+    public function buildMenuStep2(){
         $id = $_REQUEST['id'];
 
         $SQL = "select name, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
-                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
-                    and parentid in (select id from kt_menu_product  WHERE is_delete = 'N'  and is_active = 'Y' and parentid is null) )
-                order by parentid,id";
+                and parentid in (select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null) order by name";
         $result = $this->db->query($SQL)->result();
         $data = array();
         $i=0;
         foreach($result as $value){
             $response->rows[$i]['id']= $value->id;
             $response->rows[$i]['name']= $value->name;
+            $i++;
+        }
+
+        echo json_encode($response);
+    }
+    
+    public function buildMenuStep3(){
+        $id = $_REQUEST['id'];
+
+        $SQL = "select name, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
+                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                    and parentid in (select id from kt_menu_product  WHERE is_delete = 'N'  and is_active = 'Y' and parentid is null) )
+                order by name";
+        $result = $this->db->query($SQL)->result();
+        $data = array();
+        $i=0;
+        foreach($result as $value){
+            $response->rows[$i]['id']= $value->id;
+            $response->rows[$i]['name']= $value->name;
+            $i++;
+        }
+
+        echo json_encode($response);
+    }
+	
+    public function getProduct(){
+        $step = $_REQUEST['step'];
+		$menuid = $_REQUEST['menuid'];
+		$where = "";
+		
+		if(!empty($step) && !empty($menuid)){
+			if($step == 1){
+				$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                                    and parentid = '{$menuid}')";
+    			$result = $this->db->query($SQL)->result();
+				$pmenuid = array();
+				foreach($result as $row){
+					array_push($pmenuid, $row->id);
+				}
+				$pmenuid = implode(",", $pmenuid);
+				$where .= " and pmenu_id in ($pmenuid)";
+			}else if($step == 2){
+				$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                                and parentid = '{$menuid}'";
+    			$result = $this->db->query($SQL)->result();
+				$pmenuid = array();
+				foreach($result as $row){
+					array_push($pmenuid, $row->id);
+				}
+				$pmenuid = implode(",", $pmenuid);
+				$where .= " and pmenu_id in ($pmenuid)";
+			}else if($step == 3){
+				$where .= " and pmenu_id = $menuid";
+			}
+			
+
+		}
+		
+		$limit = "LIMIT 9";
+		
+		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+				from kt_product as kp 
+				left join kt_product_stock as kps on (kp.id = kps.pid) 
+				where 1=1 {$where} {$limit}";
+
+        //$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kp.stock, kp.weight from kt_product as kp left join kt_product_stock as kps on (kp.id = kps.pid) where kps.pstock = 0";
+        $result = $this->db->query($SQL)->result();
+        $i=0;
+        foreach($result as $row){
+            $response->rows[$i]['pid'] = $row->pid;
+            $response->rows[$i]['barcode'] = $row->barcode;
+            $response->rows[$i]['name_en'] = $row->name_en;
+            $response->rows[$i]['name_th'] = $row->name_th;
+            $response->rows[$i]['volumn'] = $row->volumn;
+            $response->rows[$i]['unit'] = $row->unit;
+			$response->rows[$i]['image'] = $row->image;
+            $response->rows[$i]['price'] = $row->price;
+            $response->rows[$i]['stock'] = intval($row->stock);
+            $response->rows[$i]['weight'] = $row->weight;
             $i++;
         }
 

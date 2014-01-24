@@ -4,46 +4,182 @@ function queryProduct(){
     var urlini = 'processajax/';
     
     this.buildMenuStep3Click = function(id){
-        var url = urlini+ 'buildMenuStep3';
-        var html = '';
-        $.getJSON( url, {  id: id },
-            function(result){
-            	
-            	$(".menuStep3 li").remove();
-                $.each(result.rows, function(ini, val){
-                	if(ini == 0){
-                     	html += '<li class="active"><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
-                    }else{
-                    	html += '<li class=""><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
-                    }
-                });
-                $(".menuStep3").append(html);
-                
-				//menu event
+    	var html = '';
+    	$(".menuStep3 li").remove();
+        $.each(thisClass.buildMenuStep3Obj, function(ini, val){
+        	if(ini == 0){
+             	html += '<li class="active"><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
+            }else{
+            	html += '<li class=""><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
+            }
         });
+        $(".menuStep3").append(html);
+        
+        thisClass.menuStepEvent();
     }
     
     this.buildMenuStep3Select = function(id){
+    	var html = '';
+    	$("#menuStep3Select option").remove();
+    	html += '<option value="">Please Select</option>';
+        $.each(thisClass.buildMenuStep3Obj, function(ini, val){	
+    		html += '<option value="'+val.id+'">'+val.name+'</option>';
+        });
+        $("#menuStep3Select").append(html);
+    }
+    
+    this.buildMenuStep2 = function(id){
+        var url = urlini+ 'buildMenuStep2';
+        var html = '';
+        $.getJSON( url, {  id: id },
+            function(result){
+            	if(result.rows != null){
+			    	var html = '';
+			    	html += '<option value="">Please Select</option>';
+			    	$("#menuStep2Select option").remove();
+			        $.each(result.rows, function(ini, val){
+			        	if(ini == 0){
+			        		thisClass.buildMenuStep3(val.id);
+			        	}
+			    		html += '<option value="'+val.id+'">'+val.name+'</option>';
+			        });
+			        $("#menuStep2Select").append(html);
+            	}
+        });
+    }
+    
+    this.buildMenuStep3 = function(id){
         var url = urlini+ 'buildMenuStep3';
         var html = '';
         $.getJSON( url, {  id: id },
             function(result){
-            	
-            	$("#menuStep3Select option").remove();
-                $.each(result.rows, function(ini, val){	
-            		html += '<option value="'+val.id+'">'+val.name+'</option>';
-                });
-                $("#menuStep3Select").append(html);
-                
-				//menu event
+            	if(result.rows != null){
+            		thisClass.buildMenuStep3Obj = result.rows;
+            		thisClass.buildMenuStep3Select();
+            		thisClass.buildMenuStep3Click();
+            	}
         });
+    }
+    
+    this.getProduct = function(odata){
+    	var url = urlini+ 'getProduct';
+    	var html = '';
+    	var image,volumn,unit;
+        $.getJSON( url, odata,
+            function(result){
+            	$.each(result.rows, function(ini, val){
+            		if(val.unit == null){
+            			unit = '';
+            		}else{
+            			unit = val.unit;
+            		}
+            		if(val.volumn == null){
+            			volumn = '';
+            		}else{
+            			volumn = val.volumn;
+            		}
+            		if(val.image == null){
+            			image = 'no_image.jpg';
+            		}else{
+            			image = 'large/'+val.image;
+            		}
+            		var productName = val.name_th+" "+volumn+" "+unit;
+            		
+            		html += '<div class="col-sm-6 col-md-4">';
+            		html += '<div class="thumbnail">';
+            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
+            		html += '<div class="caption">';
+            		html += '<b>'+productName+'</b>';
+            		html += '<p>ราคา '+val.price+' บาท</p>'
+            		html += '<p><a role="button" class="btn btn-primary" href="#">Buy</a> <a role="button" class="btn btn-default" href="#">Button</a></p>';
+            		html += '</div>';
+            		html += '</div>';
+            		html += '</div>';
+            	});
+            	//$("#productQuery").remove();
+				$("#productQuery").html(html);
+				thisClass.equalHeight();
+				
+				//product event
+				thisClass.productQueryEvent();
+        });
+    	
+    }
+    
+    this.equalHeight = function() {    
+	    var tallest = 0;    
+	    $(".thumbnail").each(function() {       
+	        thisHeight = $(this).height();       
+	        if(thisHeight > tallest) {          
+	            tallest = thisHeight;       
+	        }    
+	    });    
+	    $(".thumbnail").each(function() { $(this).height(tallest); });
+	} 
+    
+    this.menuStepEvent = function(){
+    	$(".menuStep3Click").click(function(){
+            var id = $(this).data('id');
+            var odata = { 'step' : 3, 'menuid' : id };
+            thisClass.getProduct(odata); 
+        });
+    }
+    
+    this.productQueryEvent = function(){
+		$(".imageProductQuery").click(function(){
+			var src = $(this).attr('src');
+			var alt = $(this).attr('alt');
+			$("#imageModalLabel").text(alt);
+			$(".pimage").attr('src', src);
+		});
+		
+		$('#imageProductModal').on('shown.bs.modal', function() {
+		    var initModalWidth = $('.modal-body:visible').outerWidth(); //give an id to .mobile-dialog
+		    var initModalPadding = $('.modal-body:visible').css('padding-left').split("px")[0];
+		    //var initModalPadding = 20;
+		    var iniImageWidth = $('.pimage').outerWidth();
+		    var iniImageHeight = $('.pimage').outerHeight();
+		    if(iniImageHeight > iniImageWidth){
+		        $('.pimage').css('margin-left', 
+		        (initModalWidth/2) - (iniImageWidth / 2) - initModalPadding); //center it if it does fit
+	       	}else{
+	       		$('.pimage').css('margin-left', '');
+	       	}
+		});
     }
 
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
             var id = $(this).data('id');
-            thisClass.buildMenuStep3Click(id);
+            var odata = { 'step' : 2, 'menuid' : id };
+            thisClass.buildMenuStep3(id);
+            thisClass.getProduct(odata);
+            
         });
+        
+        thisClass.menuStepEvent();
+        
+        $("#menuStep1Select").change(function(){
+            var id = $(this).val();
+            var odata = { 'step' : 1, 'menuid' : id };
+            thisClass.buildMenuStep2(id);
+            thisClass.getProduct(odata);
+        });
+        
+        $("#menuStep2Select").change(function(){
+            var id = $(this).val();
+            var odata = { 'step' : 2, 'menuid' : id };
+            thisClass.buildMenuStep3(id);
+            thisClass.getProduct(odata);
+        });
+        
+        $("#menuStep3Select").change(function(){
+            var id = $(this).val();
+            var odata = { 'step' : 3, 'menuid' : id };
+            thisClass.buildMenuStep3(id);
+            thisClass.getProduct(odata);
+        });
+       
     }
 
 
@@ -89,68 +225,6 @@ function queryProduct(){
 			</div>
 		</div>		
 	</div>
-	      <div class="row">
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <div class="thumbnail">
-            <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAAEr0lEQVR4nO3bMVLjSABA0bn/UcicOXHmzKFzH0FXmIlU1RYtTNXAsl/zgpdAI8lQ+tUtWr+WZfkNUPDrpy8A4LMEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIEKyDeXt7e3K/36fj7vf707jT6bR7zPP5/DT2drv99XWeTqdPn3/7mR6Px3Tc9Xp9Gne5XH7878HXEqyDeDwe727s1fV6fRp7u912x26Puw3L3jG/4jq3Mfpo7DbEl8tlOu58Pv/434avI1gHMd6w600/zozGsWuExpt5NisZw7YGYpzF7M10Pnud6zHHMI3nH8euX1s/0zgjG39+Dek4g/yKGSH/D4J1ELMIzW748UYeZynr2DEEaxzGY45xWEMwhm0Mzhi3NSSz6xzPNZ5/Npsbz7UGczzP7HdiaXgcgnVgs2XR3gxpFoK9Z0GzEIxLx8fj8RS2j55PrbbB2pshzYI5i92yzCNMm2Ad0BilvZt4OxvZLv9my6zVbJY0BuZyuTwtR/ce/M9+dj3mbDm6LPPl396sbe+z0iVYB7R9AD1b+n11sGbn/exybBw/W2YKFivBOrBxprXe9N8ZrGV5vwXh1TXu/UdPsJgRrIPbznS+O1jj8V/NrsZYbZeugsWMYB3cNh7f9dB9Wd5vRv3o+dWrmZiH7swI1gGMN/c4G5rtb/qObQ2r2SbTWSy24/Y+1+wz2dbwbxOsg5gFYLZJcxz7auPo7BnY3gxt/PrtdpvuwdqOe7VUm218nc2mZsG2cfSYBOsgPnrd5rtfzdnbc7Xdm/XR8WbX4NUctgTrQGY3+H/x8vPenqvt/qpX7xHuRXP7fS8//7sEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgIw/XTnG3++63PQAAAAASUVORK5CYII=">
-            <div class="caption">
-              <h3>Thumbnail label</h3>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a role="button" class="btn btn-primary" href="#">Button</a> <a role="button" class="btn btn-default" href="#">Button</a></p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="productQuery" class="row"></div>
 	
 </div>
