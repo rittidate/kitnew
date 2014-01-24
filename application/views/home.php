@@ -2,8 +2,9 @@
 function queryProduct(){
     var thisClass = this;
     var urlini = 'processajax/';
+    thisClass.limitPage = 5;
     
-    this.buildMenuStep3Click = function(id){
+    this.buildMenuStep3Click = function(){
     	var html = '';
     	$(".menuStep3 li").remove();
         $.each(thisClass.buildMenuStep3Obj, function(ini, val){
@@ -18,7 +19,7 @@ function queryProduct(){
         thisClass.menuStepEvent();
     }
     
-    this.buildMenuStep3Select = function(id){
+    this.buildMenuStep3Select = function(){
     	var html = '';
     	$("#menuStep3Select option").remove();
     	html += '<option value="">Please Select</option>';
@@ -28,10 +29,10 @@ function queryProduct(){
         $("#menuStep3Select").append(html);
     }
     
-    this.buildMenuStep2 = function(id){
+    this.buildMenuStep2 = function(){
         var url = urlini+ 'buildMenuStep2';
         var html = '';
-        $.getJSON( url, {  id: id },
+        $.getJSON( url, {  id: thisClass.menuid },
             function(result){
             	if(result.rows != null){
 			    	var html = '';
@@ -48,10 +49,10 @@ function queryProduct(){
         });
     }
     
-    this.buildMenuStep3 = function(id){
+    this.buildMenuStep3 = function(){
         var url = urlini+ 'buildMenuStep3';
         var html = '';
-        $.getJSON( url, {  id: id },
+        $.getJSON( url, {  id: thisClass.menuid },
             function(result){
             	if(result.rows != null){
             		thisClass.buildMenuStep3Obj = result.rows;
@@ -61,42 +62,52 @@ function queryProduct(){
         });
     }
     
-    this.getProduct = function(odata){
+    this.getProduct = function(menuid){
     	var url = urlini+ 'getProduct';
     	var html = '';
     	var image,volumn,unit;
-        $.getJSON( url, odata,
+    	
+    	if(thisClass.pageSelect == undefined){
+    		thisClass.pageSelect = 1;
+    	}
+    	
+        $.getJSON( url, {step : thisClass.step, menuid : thisClass.menuid , page : thisClass.pageSelect },
             function(result){
-            	$.each(result.rows, function(ini, val){
-            		if(val.unit == null){
-            			unit = '';
-            		}else{
-            			unit = val.unit;
-            		}
-            		if(val.volumn == null){
-            			volumn = '';
-            		}else{
-            			volumn = val.volumn;
-            		}
-            		if(val.image == null){
-            			image = 'no_image.jpg';
-            		}else{
-            			image = 'large/'+val.image;
-            		}
-            		var productName = val.name_th+" "+volumn+" "+unit;
-            		
-            		html += '<div class="col-sm-6 col-md-4">';
-            		html += '<div class="thumbnail">';
-            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
-            		html += '<div class="caption">';
-            		html += '<b>'+productName+'</b>';
-            		html += '<p>ราคา '+val.price+' บาท</p>'
-            		html += '<p><a role="button" class="btn btn-primary" href="#">Buy</a> <a role="button" class="btn btn-default" href="#">Button</a></p>';
-            		html += '</div>';
-            		html += '</div>';
-            		html += '</div>';
-            	});
-            	//$("#productQuery").remove();
+            	thisClass.pagerNumber = result.page;
+            	thisClass.getPager();
+            	if(result.rows !== undefined){
+            	
+	            	$.each(result.rows, function(ini, val){
+	            		if(val.unit == null){
+	            			unit = '';
+	            		}else{
+	            			unit = val.unit;
+	            		}
+	            		if(val.volumn == null){
+	            			volumn = '';
+	            		}else{
+	            			volumn = val.volumn;
+	            		}
+	            		if(val.image == ''){
+	            			image = 'no_image.jpg';
+	            		}else{
+	            			image = 'large/'+val.image;
+	            		}
+	            		var productName = val.name_th+" "+volumn+" "+unit;
+	            		
+	            		html += '<div class="col-sm-6 col-md-4">';
+	            		html += '<div class="thumbnail">';
+	            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
+	            		html += '<div class="caption">';
+	            		html += '<b>'+productName+'</b>';
+	            		html += '<p>ราคา '+val.price+' บาท</p>'
+	            		html += '<p><a role="button" class="btn btn-primary" href="#">Buy</a> <a role="button" class="btn btn-default" href="#">Button</a></p>';
+	            		html += '</div>';
+	            		html += '</div>';
+	            		html += '</div>';
+	            	});
+				}
+	         	//$("#productQuery").remove();
 				$("#productQuery").html(html);
 				thisClass.equalHeight();
 				
@@ -104,6 +115,77 @@ function queryProduct(){
 				thisClass.productQueryEvent();
         });
     	
+    }
+    
+    this.getPager = function(){
+    	var startpage,endpage;
+    	var len = thisClass.pagerNumber;
+    	var html = '';
+    	
+
+		if(thisClass.pageSelect > 1){
+			html += '<li><a class="pagerNumber" data-number="prev" href="#pagerNumber">&laquo;</a></li>';
+		}
+    	
+    	if(thisClass.pagerNumber > thisClass.limitPage){
+			if(thisClass.pagerNumber > (thisClass.pageSelect + thisClass.limitPage -1)){
+				startpage = thisClass.pageSelect;
+				endpage = thisClass.pageSelect + thisClass.limitPage -1;
+			}else if(thisClass.pagerNumber <= (thisClass.pageSelect + thisClass.limitPage -1)){
+				startpage = thisClass.pagerNumber - thisClass.limitPage+1;
+				endpage = thisClass.pagerNumber;
+			}
+		}else if(thisClass.pagerNumber == thisClass.limitPage){
+			startpage = 1;
+			endpage = thisClass.limitPage;
+		}else if(thisClass.pagerNumber < thisClass.limitPage){
+			startpage = 1;
+			endpage = thisClass.pagerNumber;
+		}
+    	
+        for (var i=startpage;i<=endpage;i++)
+        {
+        	html += '<li data-id="'+i+'"><a class="pagerNumber" data-number="'+i+'" href="#pagerNumber">'+i+'</a></li>'
+        }
+        
+    	if(thisClass.pageSelect < thisClass.pagerNumber){
+    		html += '<li><a class="pagerNumber" data-number="next" href="#pagerNumber">&raquo;</a></li>';
+    	}
+        
+        $(".pagerProduct").html(html);
+        
+        $(".pagerProduct li[data-id='"+thisClass.pageSelect+"']").addClass('active');
+        
+        //page event
+        $(".pagerNumber").click(function(){
+        	var number = $(this).data('number');
+        	if(number == 'prev'){
+        		thisClass.pageSelect = thisClass.pageSelect-1;
+        	}else if(number == 'next'){
+        		thisClass.pageSelect = thisClass.pageSelect+1;
+        	}else{
+        		thisClass.pageSelect = number;	
+        	}
+        	thisClass.getProduct();
+        	//thisClass.getPager();
+        });
+    	
+    }
+    
+    this.buildSelectQty = function(qty, pid){
+        var len = 99;
+        var option = '';
+        option += "<select class='select_orderDetail span1' data-id='"+pid+"'>";
+        for (var i=1;i<len;i++)
+        {
+            if(i == qty){
+                option += "<option value='"+i+"' selected>"+i+"</option>";
+            }else{
+                option += "<option value='"+i+"'>"+i+"</option>";
+            }
+        }
+        option += "</select>";
+        return option;
     }
     
     this.equalHeight = function() {    
@@ -120,8 +202,10 @@ function queryProduct(){
     this.menuStepEvent = function(){
     	$(".menuStep3Click").click(function(){
             var id = $(this).data('id');
-            var odata = { 'step' : 3, 'menuid' : id };
-            thisClass.getProduct(odata); 
+            thisClass.step = 3;
+            thisClass.menuid = id;
+            thisClass.pageSelect = 1;
+            thisClass.getProduct(); 
         });
     }
     
@@ -136,7 +220,6 @@ function queryProduct(){
 		$('#imageProductModal').on('shown.bs.modal', function() {
 		    var initModalWidth = $('.modal-body:visible').outerWidth(); //give an id to .mobile-dialog
 		    var initModalPadding = $('.modal-body:visible').css('padding-left').split("px")[0];
-		    //var initModalPadding = 20;
 		    var iniImageWidth = $('.pimage').outerWidth();
 		    var iniImageHeight = $('.pimage').outerHeight();
 		    if(iniImageHeight > iniImageWidth){
@@ -151,9 +234,11 @@ function queryProduct(){
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
             var id = $(this).data('id');
-            var odata = { 'step' : 2, 'menuid' : id };
-            thisClass.buildMenuStep3(id);
-            thisClass.getProduct(odata);
+            thisClass.step = 2;
+            thisClass.menuid = id;
+            thisClass.pageSelect = 1;
+            thisClass.buildMenuStep3();
+            thisClass.getProduct();
             
         });
         
@@ -161,23 +246,29 @@ function queryProduct(){
         
         $("#menuStep1Select").change(function(){
             var id = $(this).val();
-            var odata = { 'step' : 1, 'menuid' : id };
-            thisClass.buildMenuStep2(id);
-            thisClass.getProduct(odata);
+            thisClass.step = 1;
+            thisClass.menuid = id;
+            thisClass.pageSelect = 1;
+            thisClass.buildMenuStep2();
+            thisClass.getProduct();
         });
         
         $("#menuStep2Select").change(function(){
             var id = $(this).val();
-            var odata = { 'step' : 2, 'menuid' : id };
-            thisClass.buildMenuStep3(id);
-            thisClass.getProduct(odata);
+            thisClass.step = 2;
+            thisClass.menuid = id;
+            thisClass.pageSelect = 1;
+            thisClass.buildMenuStep3();
+            thisClass.getProduct();
         });
         
         $("#menuStep3Select").change(function(){
             var id = $(this).val();
-            var odata = { 'step' : 3, 'menuid' : id };
-            thisClass.buildMenuStep3(id);
-            thisClass.getProduct(odata);
+			thisClass.step = 3;
+			thisClass.menuid = id;
+			thisClass.pageSelect = 1;
+            thisClass.buildMenuStep3();
+            thisClass.getProduct();
         });
        
     }
@@ -206,14 +297,7 @@ function queryProduct(){
 <div class="bs-example">
 	<div class="row">
 		<div class="hidden-xs pull-right">
-			<ul class="pagination">
-			  <li><a href="#">&laquo;</a></li>
-			  <li><a href="#">1</a></li>
-			  <li><a href="#">2</a></li>
-			  <li><a href="#">3</a></li>
-			  <li><a href="#">4</a></li>
-			  <li><a href="#">5</a></li>
-			  <li><a href="#">&raquo;</a></li>
+			<ul class="pagination pagerProduct">
 			</ul>
 		</div>
 		<div class="container">

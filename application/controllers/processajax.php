@@ -187,7 +187,11 @@ class Processajax extends Main_Controller {
     public function getProduct(){
         $step = $_REQUEST['step'];
 		$menuid = $_REQUEST['menuid'];
+		$page = $_REQUEST['page'];
 		$where = "";
+		$numberLimit = 9;
+		
+		
 		
 		if(!empty($step) && !empty($menuid)){
 			if($step == 1){
@@ -217,13 +221,28 @@ class Processajax extends Main_Controller {
 			
 
 		}
+		if(empty($page)){
+			$limit = "LIMIT $numberLimit";
+		}else{
+			$start = ($page-1) * $numberLimit;
+			$limit = "LIMIT $start, $numberLimit";
+		}
 		
-		$limit = "LIMIT 9";
+		$SQL_COUNT = "select count(*) as count
+				from kt_product as kp 
+				left join kt_product_stock as kps on (kp.id = kps.pid) 
+				where kp.is_active='Y' and kp.is_delete='N' {$where}";
+		$count = $this->db->query($SQL_COUNT)->result();
+		
+		$count = $count[0]->count;
+		
+		$response->page[0] = ceil ( $count / $numberLimit );
+		
 		
 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kps.pstock as stock, kp.weight, kp.image
 				from kt_product as kp 
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
-				where 1=1 {$where} {$limit}";
+				where kp.is_active='Y' and kp.is_delete='N' {$where} {$limit}";
 
         //$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kp.stock, kp.weight from kt_product as kp left join kt_product_stock as kps on (kp.id = kps.pid) where kps.pstock = 0";
         $result = $this->db->query($SQL)->result();
