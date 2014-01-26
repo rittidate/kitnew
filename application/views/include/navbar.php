@@ -6,7 +6,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
+            <span class="badge cartNotify" style="position: absolute; top:-5px; left:30px; background-color: #FF0000;">0</span>
           </button>
+          
           <a href="<?php echo base_url(); ?>" class="navbar-brand">Kittivate</a>
         </div>
         <div class="navbar-collapse collapse">
@@ -29,9 +31,27 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" ><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> <?php echo $map; ?></span></a></li>
-            <li><a href="#" data-toggle="modal" data-target="#userModal" title="<?php echo $user; ?>"><i class="fa fa-user hidden-xs fa-2x"></i><span class="fa fa-user visible-xs"> <?php echo $user; ?></span></a></li>
-            <li><a href="#"><i class="fa fa-clipboard hidden-xs fa-2x"></i><span class="fa fa-clipboard visible-xs"> <?php echo $order; ?></span></a></li>
-            <li><a href="#"><i class="fa fa-shopping-cart hidden-xs fa-2x"></i><span class="fa fa-shopping-cart visible-xs"> <?php echo $cart; ?></span></a></li>
+            <li>
+            	<a href="#" data-toggle="modal" data-target="#userModal" title="<?php echo $user; ?>">
+            		<i class="fa fa-user hidden-xs fa-2x"></i>
+            		<span class="fa fa-user visible-xs"> <?php echo $user; ?></span>
+            		</a>
+    		</li>
+            <li>
+            	<a href="#">
+            	<i class="fa fa-clipboard hidden-xs fa-2x"></i>
+            	<span class="fa fa-clipboard visible-xs"> <?php echo $order; ?></span>
+            	</a>
+            	<span class="badge hidden-xs orderNotify" style="position: absolute; top:8px; left:35px; background-color: #FF0000;">0</span>
+        	</li>
+            <li>
+            	<a href="#"  data-toggle="modal" data-target="#cartModal">
+            		<i class="fa fa-shopping-cart hidden-xs fa-2x"></i>
+            		<span class="fa fa-shopping-cart visible-xs"> <?php echo $cart; ?></span>
+            		<span class="badge hidden-xs cartNotify" style="position: absolute; top:8px; left:35px; background-color: #FF0000;">0</span>
+        		</a>
+        		
+    		</li>
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-cogs hidden-xs fa-2x"><b class="caret"></b></i><span class="fa fa-cogs visible-xs"> <?php echo $config; ?><b class="caret"></b></span></a>
                 <ul class="dropdown-menu">

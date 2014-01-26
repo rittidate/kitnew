@@ -158,7 +158,27 @@ class Main_Controller extends MY_Controller
            $this->load->view('include/modal_user', $data);
 
         }
+
+		$this->modalCart();
     }
+
+	private function modalCart()
+	{
+    	//langague 
+        $this->lang->load('product', $this->session['language']);
+
+        $data["plabel_barcode"] = $this->lang->line("plabel_barcode");
+		$data["plabel_product"] = $this->lang->line("plabel_product");
+        $data["plabel_price"] = $this->lang->line("plabel_price");
+        $data["plabel_baht"] = $this->lang->line("plabel_baht");
+        $data["plabel_buy"] = $this->lang->line("plabel_buy");
+        $data["plabel_qty"] = $this->lang->line("plabel_qty");
+		$data["plabel_total"] = $this->lang->line("plabel_total");
+		$data["plabel_subtotal"] = $this->lang->line("plabel_subtotal");
+		$data["plabel_shipprice"] = $this->lang->line("plabel_shipprice");
+		$data["plabel_grandtotal"] = $this->lang->line("plabel_grandtotal");
+		$this->load->view('include/modal_cart', $data);
+	}
 
     public function advertiserMain()
     {

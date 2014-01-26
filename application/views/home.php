@@ -99,9 +99,10 @@ function queryProduct(){
 	            		html += '<div class="thumbnail">';
 	            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
 	            		html += '<div class="caption">';
-	            		html += '<b>'+productName+'</b>';
-	            		html += '<p>ราคา '+val.price+' บาท</p>'
-	            		html += '<p><a role="button" class="btn btn-primary" href="#">Buy</a> <a role="button" class="btn btn-default" href="#">Button</a></p>';
+	            		html += '<p class="text-muted"><?php echo $plabel_barcode; ?> : <span class="product_barcode" data-id="'+val.pid+'">'+val.barcode+'</span></p>';
+	            		html += '<b><span class="product_name" data-id="'+val.pid+'">'+productName+'</span></b>';
+	            		html += '<p><?php echo $plabel_price; ?> : <span class="product_price" data-id="'+val.pid+'">'+val.price+'</span> <?php echo $plabel_baht; ?> </p>';
+	            		html += '<p><?php echo $plabel_qty; ?> : '+thisClass.buildSelectQty(val.stock, val.pid)+' <a role="button" class="btn btn-primary product_buy" data-id="'+val.pid+'" href="#buy"><?php echo $plabel_buy; ?></a></p>';
 	            		html += '</div>';
 	            		html += '</div>';
 	            		html += '</div>';
@@ -122,9 +123,8 @@ function queryProduct(){
     	var len = thisClass.pagerNumber;
     	var html = '';
     	
-
 		if(thisClass.pageSelect > 1){
-			html += '<li><a class="pagerNumber" data-number="prev" href="#pagerNumber">&laquo;</a></li>';
+			html += '<li><a class="pagerNumber" data-number="prev" href="#page">&laquo;</a></li>';
 		}
     	
     	if(thisClass.pagerNumber > thisClass.limitPage){
@@ -145,47 +145,69 @@ function queryProduct(){
     	
         for (var i=startpage;i<=endpage;i++)
         {
-        	html += '<li data-id="'+i+'"><a class="pagerNumber" data-number="'+i+'" href="#pagerNumber">'+i+'</a></li>'
+        	html += '<li data-id="'+i+'"><a class="pagerNumber" data-number="'+i+'" href="#page">'+i+'</a></li>'
         }
         
     	if(thisClass.pageSelect < thisClass.pagerNumber){
-    		html += '<li><a class="pagerNumber" data-number="next" href="#pagerNumber">&raquo;</a></li>';
+    		html += '<li><a class="pagerNumber" data-number="next" href="#page">&raquo;</a></li>';
     	}
         
         $(".pagerProduct").html(html);
         
         $(".pagerProduct li[data-id='"+thisClass.pageSelect+"']").addClass('active');
         
-        //page event
-        $(".pagerNumber").click(function(){
-        	var number = $(this).data('number');
-        	if(number == 'prev'){
-        		thisClass.pageSelect = thisClass.pageSelect-1;
-        	}else if(number == 'next'){
-        		thisClass.pageSelect = thisClass.pageSelect+1;
-        	}else{
-        		thisClass.pageSelect = number;	
-        	}
-        	thisClass.getProduct();
-        	//thisClass.getPager();
-        });
+		thisClass.pagerEvent();
     	
     }
     
     this.buildSelectQty = function(qty, pid){
         var len = 99;
+        //var len = qty;
         var option = '';
-        option += "<select class='select_orderDetail span1' data-id='"+pid+"'>";
-        for (var i=1;i<len;i++)
-        {
-            if(i == qty){
-                option += "<option value='"+i+"' selected>"+i+"</option>";
-            }else{
-                option += "<option value='"+i+"'>"+i+"</option>";
-            }
+        option += "<select class='product_qty' data-id='"+pid+"'>";
+        if(len > 0){
+	        for (var i=1;i<len;i++)
+	        {
+	            if(i == qty){
+	                option += "<option value='"+i+"' selected>"+i+"</option>";
+	            }else{
+	                option += "<option value='"+i+"'>"+i+"</option>";
+	            }
+	        }
         }
         option += "</select>";
         return option;
+    }
+    
+    this.buildCartDetailGrid = function(){
+        $(".detail_grid").remove();
+        var tr = '';
+        var i = 0;
+        var subtotal = 0;
+        var weightTotal = 0;
+        if(thisClass.objProductCart != null){
+            
+            $.each(thisClass.objProductCart, function(ini, val){
+                subtotal += val.price * val.qty;
+                weightTotal += val.weight * val.qty;
+                tr +=  "<tr class='detail_grid'>";
+                tr += "<td><i class='icon-remove podRemove' data-id='"+val.pid+"'></i></td>";
+                tr += "<td>"+val.barcode+"</td>";
+                tr += "<td>"+val.name+"</td>";
+                tr += "<td>"+val.price+"</td>";
+                tr += "<td>"+val.qty+"</td>";
+                //tr += "<td>"+thisClass.buildSelectQty(val.qty, val.pid)+"</td>";
+                tr += "<td>"+val.total+"</td>";
+                tr += "</tr>";
+            });
+        }
+        $(tr).insertBefore(".cartdetail_tr");
+        $("#txt_subtotal").val(subtotal);
+        
+        $(".cartNotify").text(thisClass.objProductCart.length);
+        
+        //thisClass.getRatePrice(subtotal, weightTotal);
+        //thisClass.orderDetailGridevent();
     }
     
     this.equalHeight = function() {    
@@ -209,6 +231,22 @@ function queryProduct(){
         });
     }
     
+    this.pagerEvent = function(){
+        //page event
+        $(".pagerNumber").click(function(){
+        	var number = $(this).data('number');
+        	if(number == 'prev'){
+        		thisClass.pageSelect = thisClass.pageSelect-1;
+        	}else if(number == 'next'){
+        		thisClass.pageSelect = thisClass.pageSelect+1;
+        	}else{
+        		thisClass.pageSelect = number;	
+        	}
+        	thisClass.getProduct();
+        	//thisClass.getPager();
+        });
+    }
+    
     this.productQueryEvent = function(){
 		$(".imageProductQuery").click(function(){
 			var src = $(this).attr('src');
@@ -219,7 +257,8 @@ function queryProduct(){
 		
 		$('#imageProductModal').on('shown.bs.modal', function() {
 		    var initModalWidth = $('.modal-body:visible').outerWidth(); //give an id to .mobile-dialog
-		    var initModalPadding = $('.modal-body:visible').css('padding-left').split("px")[0];
+		    //var initModalPadding = $('.modal-body:visible').css('padding-left').split("px")[0];
+		    var initModalPadding = 30;
 		    var iniImageWidth = $('.pimage').outerWidth();
 		    var iniImageHeight = $('.pimage').outerHeight();
 		    if(iniImageHeight > iniImageWidth){
@@ -228,6 +267,48 @@ function queryProduct(){
 	       	}else{
 	       		$('.pimage').css('margin-left', '');
 	       	}
+		});
+		
+		$('.product_buy').click(function(){
+			var id = $(this).attr('data-id');
+			console.log(id);
+			var barcode = $(".product_barcode[data-id='"+id+"']").text();
+			var qty = $(".product_qty[data-id='"+id+"']").val();
+			var name = $(".product_name[data-id='"+id+"']").text();
+			var price = parseInt($(".product_price[data-id='"+id+"']").text());
+			var obj= { 
+	        		 	id : id,
+						 barcode : barcode,
+						 name : name,
+						 price : price,
+						 qty : qty,
+						 total : price * qty
+						};
+			//console.log(thisClass.objProductCart);
+			if(thisClass.objProductCart != undefined || thisClass.objProductCart != null){
+				var inArray = [];
+				thisClass.objProductCartAdd = [];
+				$.each(thisClass.objProductCart, function(ini, val){
+					inArray.push(val.id);
+				});
+                $.each(thisClass.objProductCart, function(ini, val){
+	                    if(val.id == id){
+	                        thisClass.objProductCartAdd.push(obj);
+	                    }else{
+	                    	thisClass.objProductCartAdd.push(val);
+	                    }   
+                });
+                
+				if(inArray.indexOf(id) == -1){
+                        thisClass.objProductCartAdd.push(obj);
+                }
+                
+                thisClass.objProductCart = thisClass.objProductCartAdd;
+				
+			}else{
+				thisClass.objProductCart = [obj];
+			}
+			thisClass.buildCartDetailGrid();
 		});
     }
 
