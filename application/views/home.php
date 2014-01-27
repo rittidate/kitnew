@@ -102,7 +102,9 @@ function queryProduct(){
 	            		html += '<p class="text-muted"><?php echo $plabel_barcode; ?> : <span class="product_barcode" data-id="'+val.pid+'">'+val.barcode+'</span></p>';
 	            		html += '<b><span class="product_name" data-id="'+val.pid+'">'+productName+'</span></b>';
 	            		html += '<p><?php echo $plabel_price; ?> : <span class="product_price" data-id="'+val.pid+'">'+val.price+'</span> <?php echo $plabel_baht; ?> </p>';
-	            		html += '<p><?php echo $plabel_qty; ?> : '+thisClass.buildSelectQty(val.stock, val.pid)+' <a role="button" class="btn btn-primary product_buy" data-id="'+val.pid+'" href="#buy"><?php echo $plabel_buy; ?></a></p>';
+	            		html += '<p><?php echo $plabel_qty; ?> : ';
+	            		html += thisClass.buildSelectQty(val.stock, val.pid)+' <a role="button" class="btn btn-primary product_buy" data-id="'+val.pid+'" href="#buy"><?php echo $plabel_buy; ?></a>';
+	            		html += '<input type="hidden" class="product_stock" data-id="'+val.pid+'" value="'+val.stock+'"></p>';
 	            		html += '</div>';
 	            		html += '</div>';
 	            		html += '</div>';
@@ -160,11 +162,11 @@ function queryProduct(){
     	
     }
     
-    this.buildSelectQty = function(qty, pid){
+    this.buildSelectCartQty = function(qty, pid, stock){
         var len = 99;
-        //var len = qty;
+        var len = stock;
         var option = '';
-        option += "<select class='product_qty' data-id='"+pid+"'>";
+        option += "<select class='productCart_qty' data-id='"+pid+"'>";
         if(len > 0){
 	        for (var i=1;i<len;i++)
 	        {
@@ -179,6 +181,21 @@ function queryProduct(){
         return option;
     }
     
+    this.buildSelectQty = function(qty, pid){
+        var len = 99;
+        //var len = qty;
+        var option = '';
+        option += "<select class='product_qty' data-id='"+pid+"'>";
+        if(len > 0){
+	        for (var i=1;i<len;i++)
+	        {
+	                option += "<option value='"+i+"'>"+i+"</option>";
+	        }
+        }
+        option += "</select>";
+        return option;
+    }
+    
     this.buildCartDetailGrid = function(){
         $(".detail_grid").remove();
         var tr = '';
@@ -186,7 +203,7 @@ function queryProduct(){
         var subtotal = 0;
         var weightTotal = 0;
         if(thisClass.objProductCart != null){
-            
+            console.log(thisClass.objProductCart);
             $.each(thisClass.objProductCart, function(ini, val){
                 subtotal += val.price * val.qty;
                 weightTotal += val.weight * val.qty;
@@ -195,8 +212,7 @@ function queryProduct(){
                 tr += "<td>"+val.barcode+"</td>";
                 tr += "<td>"+val.name+"</td>";
                 tr += "<td>"+val.price+"</td>";
-                tr += "<td>"+val.qty+"</td>";
-                //tr += "<td>"+thisClass.buildSelectQty(val.qty, val.pid)+"</td>";
+                tr += "<td>"+thisClass.buildSelectCartQty(val.qty, val.pid, val.stock)+"</td>";
                 tr += "<td>"+val.total+"</td>";
                 tr += "</tr>";
             });
@@ -271,18 +287,20 @@ function queryProduct(){
 		
 		$('.product_buy').click(function(){
 			var id = $(this).attr('data-id');
-			console.log(id);
 			var barcode = $(".product_barcode[data-id='"+id+"']").text();
 			var qty = $(".product_qty[data-id='"+id+"']").val();
 			var name = $(".product_name[data-id='"+id+"']").text();
 			var price = parseInt($(".product_price[data-id='"+id+"']").text());
+			//var stock = $(".product_stock[data-id='"+id+"']").val();
+			var stock = 99;
 			var obj= { 
 	        		 	id : id,
 						 barcode : barcode,
 						 name : name,
 						 price : price,
 						 qty : qty,
-						 total : price * qty
+						 total : price * qty,
+						 stock : stock
 						};
 			//console.log(thisClass.objProductCart);
 			if(thisClass.objProductCart != undefined || thisClass.objProductCart != null){

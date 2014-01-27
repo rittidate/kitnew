@@ -29,6 +29,7 @@
               </ul>
             </li>
           </ul>
+          
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" ><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> <?php echo $map; ?></span></a></li>
             <li>
@@ -62,6 +63,17 @@
             <?php echo $profile; ?>
 
           </ul>
+          
+        <div class="col-sm-3 col-md-3 visible-lg visible-md pull-right">
+        <form class="navbar-form" role="search">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        </form>
+        </div>
         </div><!--/.nav-collapse -->
       </div>
     </div>
