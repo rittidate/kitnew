@@ -20,6 +20,7 @@ class Home extends Main_Controller {
 	
        $this->load->view('home',$data);
 	   $this->load->view('include/modal_image');
+	   $this->load->view('include/modal_confirm');
        $this->load->view('include/footer');
     }
 

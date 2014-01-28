@@ -11,7 +11,7 @@
                 <table id="grid-cartdetail" class="table">
                     <thead>
                             <tr>
-                            	<th></th>
+                            	<th align="center"><input type="checkbox" class="deleteAllCart" /></th>
                                 <th><?php echo $plabel_barcode; ?></th>
                                 <th><?php echo $plabel_product; ?></th>
                                 <th><?php echo $plabel_price; ?></th>
