@@ -234,11 +234,12 @@ function queryProduct(){
         
         $(".cartNotify").text(thisClass.objProductCart.length);
         
-        if(thisClass.objProductCart.length > 0){
+        console.log(thisClass.objProductCart);
+        if(thisClass.objProductCart.length == 0){
+        	$('#stage2Btn').addClass('hide');
         	
-			$('#goStage1').addClass('hide');
         }else{
-        	$('#goStage1').removeClass('hide').show();
+        	$('#stage2Btn').removeClass('hide').show();
         }
         //thisClass.getRatePrice(subtotal, weightTotal);
         //thisClass.orderDetailGridevent();

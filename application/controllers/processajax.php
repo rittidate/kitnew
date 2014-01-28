@@ -283,35 +283,37 @@ class Processajax extends Main_Controller {
     public function getSessionCart(){
 		 $json = $this->session['cart'];
 		 if(!empty($this->session['cart'])){
-		 $i=0;
-		 foreach ($json as $key => $value) {
-		 	$where = "and kp.id = {$value->id}";
-	 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
-				from kt_product as kp
-				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
-				left join kt_product_stock as kps on (kp.id = kps.pid) 
-				where kp.is_active='Y' and kp.is_delete='N' {$where} ";
-				
-		        $result = $this->db->query($SQL)->result();
-		        
-		        foreach($result as $row){
-		            $response->rows[$i]['id'] = $row->pid;
-		            $response->rows[$i]['barcode'] = $row->barcode;
-		            if($this->session['language'] == 'english'){
-		            	$response->rows[$i]['name'] = $row->name_en;
-					}else if($this->session['language'] == 'thailand'){
-		            	$response->rows[$i]['name'] = $row->name_th;
-		            }
-		            $response->rows[$i]['volumn'] = $row->volumn;
-		            $response->rows[$i]['unit'] = $row->unit;
-		            $response->rows[$i]['price'] = $row->price;
-		            $response->rows[$i]['stock'] = intval($row->stock);
-		            $response->rows[$i]['weight'] = $row->weight;
-		            $response->rows[$i]['qty'] = $value->qty;
-		            $i++;
-		        }
-		 }
-		 echo json_encode($response);
+			 $i=0;
+			 foreach ($json as $key => $value) {
+			 	$where = "and kp.id = {$value->id}";
+		 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+					from kt_product as kp
+					left join kt_define_data_type as kdt on (kp.unit = kdt.id)
+					left join kt_product_stock as kps on (kp.id = kps.pid) 
+					where kp.is_active='Y' and kp.is_delete='N' {$where} ";
+					
+			        $result = $this->db->query($SQL)->result();
+			        
+			        foreach($result as $row){
+			            $response->rows[$i]['id'] = $row->pid;
+			            $response->rows[$i]['barcode'] = $row->barcode;
+			            if($this->session['language'] == 'english'){
+			            	$response->rows[$i]['name'] = $row->name_en;
+						}else if($this->session['language'] == 'thailand'){
+			            	$response->rows[$i]['name'] = $row->name_th;
+			            }
+			            $response->rows[$i]['volumn'] = $row->volumn;
+			            $response->rows[$i]['unit'] = $row->unit;
+			            $response->rows[$i]['price'] = $row->price;
+			            $response->rows[$i]['stock'] = intval($row->stock);
+			            $response->rows[$i]['weight'] = $row->weight;
+			            $response->rows[$i]['qty'] = $value->qty;
+			            $i++;
+			        }
+			 }
+			 echo json_encode($response);
+		 }else{
+		 	echo json_encode('');
 		 }
 
     }
