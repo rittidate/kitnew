@@ -9,8 +9,12 @@
 
 <script>
         $.getScript('<?php echo base_url('assets/datepicker/js/bootstrap-datepicker.js') ?>',function(){
-	$('#birth').datepicker({
-            format: 'yyyy-mm-dd'
+			$('#user_birth').datepicker({
+            	format: 'yyyy-mm-dd'
+            });
+            
+            $('#ship_birth').datepicker({
+            	format: 'yyyy-mm-dd'
             });
         });
 </script>

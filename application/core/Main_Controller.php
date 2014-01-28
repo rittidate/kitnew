@@ -177,6 +177,71 @@ class Main_Controller extends MY_Controller
 		$data["plabel_subtotal"] = $this->lang->line("plabel_subtotal");
 		$data["plabel_shipprice"] = $this->lang->line("plabel_shipprice");
 		$data["plabel_grandtotal"] = $this->lang->line("plabel_grandtotal");
+		
+		
+        $this->lang->load('modal_user', $this->session['language']);
+		$data["label_salutation"] = $this->lang->line("label_salutation");
+		$data["label_firstname"] = $this->lang->line("label_firstname");
+		$data["label_lastname"] = $this->lang->line("label_lastname");
+		$data["label_gender"] = $this->lang->line("label_gender");
+		$data["label_birth"] = $this->lang->line("label_birth");
+		$data["label_address1"] = $this->lang->line("label_address1");
+		$data["label_address2"] = $this->lang->line("label_address2");
+		$data["label_address3"] = $this->lang->line("label_address3");
+		$data["label_address4"] = $this->lang->line("label_address4");
+		$data["label_city"] = $this->lang->line("label_city");
+		$data["label_state"] = $this->lang->line("label_state");
+		$data["label_country"] = $this->lang->line("label_country");
+		$data["label_zipcode"] = $this->lang->line("label_zipcode");
+		$data["label_mobile"] = $this->lang->line("label_mobile");
+		$data["label_telephone"] = $this->lang->line("label_telephone");
+		$data["label_ext"] = $this->lang->line("label_ext");
+		$data["label_fax"] = $this->lang->line("label_fax");
+		
+		if(!empty($this->session['user'])){
+	       $user = $this->db->where('id', $this->session['user'])
+	               ->get('kt_customer')->row();
+				   
+	       $data["id"] = $user->id;
+	       $data["firstname"] = $user->firstname;
+	       $data["lastname"] = $user->lastname;
+	       $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), $user->salutation, 'class="form-control" id="ship_salutation"');
+	       $data["gender"] = form_dropdown('gender', $this->kv->getGender(), $user->gender, 'class="form-control" id="ship_gender"');
+	       $data["birth"] = $user->birth;
+	       $data["address1"] = $user->address1;
+	       $data["address2"] = $user->address2;
+	       $data["address3"] = $user->address3;
+	       $data["address4"] = $user->address4;
+	       $data["city"] = $user->city;
+	       $data["state"] = $user->state;
+	       $data["country"] = form_dropdown('country', $this->kv->getCountry(), $user->country, 'class="form-control" id="ship_country"');
+	       $data["zipcode"] = $user->zipcode;
+	       $data["mobile"] = $user->mobile;
+	       $data["telephone"] = $user->telephone;
+	       $data["telephone_ext"] = $user->telephone_ext;
+	       $data["fax"] = $user->fax;
+	       $data["fax_ext"] = $user->fax_ext;
+       }else{
+       	   $data["id"] = '';
+	       $data["firstname"] = '';
+	       $data["lastname"] = '';
+	       $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), '', 'class="form-control" id="ship_salutation"');
+	       $data["gender"] = form_dropdown('gender', $this->kv->getGender(), '', 'class="form-control" id="ship_gender"');
+	       $data["birth"] = '';
+	       $data["address1"] = '';
+	       $data["address2"] = '';
+	       $data["address3"] = '';
+	       $data["address4"] = '';
+	       $data["city"] = '';
+	       $data["state"] = '';
+	       $data["country"] = form_dropdown('country', $this->kv->getCountry(), 'Thailand', 'class="form-control" id="ship_country"');
+	       $data["zipcode"] = '';
+	       $data["mobile"] = '';
+	       $data["telephone"] = '';
+	       $data["telephone_ext"] = '';
+	       $data["fax"] = '';
+	       $data["fax_ext"] = '';
+       }
 		$this->load->view('include/modal_cart', $data);
 	}
 

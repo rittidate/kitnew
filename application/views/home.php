@@ -165,7 +165,7 @@ function queryProduct(){
     }
     
     this.buildSelectCartQty = function(qty, pid, stock){
-        var len = 99;
+        //var len = 99;
         var len = stock;
         var option = '';
         option += "<select class='productCart_qty' data-id='"+pid+"'>";
@@ -184,8 +184,8 @@ function queryProduct(){
     }
     
     this.buildSelectQty = function(qty, pid){
-        var len = 99;
-        //var len = qty;
+        //var len = 99;
+        var len = qty;
         var option = '';
         option += "<select class='product_qty' data-id='"+pid+"'>";
         if(len > 0){
@@ -224,10 +224,22 @@ function queryProduct(){
         thisClass.saveSessionCart(obj);
 
         $(tr).insertBefore(".cartdetail_tr");
-        $("#txt_subtotal").val(subtotal);
+        //subtotal
+        $("#cart_subtotal").val(subtotal);
+        $(".text_subtotal").text(subtotal);
+        
+        //subweight
+        $("#cart_subtotal").val(subtotal);
+        $("#cart_subweight").val(weightTotal);
         
         $(".cartNotify").text(thisClass.objProductCart.length);
         
+        if(thisClass.objProductCart.length > 0){
+        	
+			$('#goStage1').addClass('hide');
+        }else{
+        	$('#goStage1').removeClass('hide').show();
+        }
         //thisClass.getRatePrice(subtotal, weightTotal);
         //thisClass.orderDetailGridevent();
         
@@ -307,6 +319,61 @@ function queryProduct(){
                         var grandtotal = subtotal + result;
                         $("#txt_shipprice").val(result);
                         $("#txt_grandtotal").val(grandtotal);
+		});
+    }
+    
+    this.getAutoCity = function(add){
+        var url = urlini+ 'getAutoCity';
+    	var keyword = $("#ship_city").val();
+    	var country = $("#ship_country").val();
+    	var state = $("#ship_state").val();
+    	$.getJSON(
+			url,
+			{       country: country,
+				state: state,
+				keyword : keyword },
+			function(result){
+                            var suggestions = [];
+                            if(result != null){
+				$.each(result.rows, function(ini, val){
+					suggestions.push(val.name);
+				});
+                            }
+                            add(suggestions);
+                            $(".ui-autocomplete:visible").css({'z-index': '2000'});
+		});
+    }
+
+    this.getAutoState = function(add){
+    	var url = urlini+ 'getAutoState';
+    	var keyword = $("#ship_state").val();
+    	var country = $("#ship_country").val();
+    	$.getJSON(
+                    url,
+                    {       country: country,
+                            keyword : keyword },
+                    function(result){
+                        var suggestions = [];
+                        if(result != null){
+                            $.each(result.rows, function(ini, val){
+                                    suggestions.push(val.name);
+                            });
+                        }
+                        add(suggestions);
+                        $(".ui-autocomplete:visible").css({'z-index': '2000'});
+		});
+    }
+
+    this.getAutoZipcode = function(){
+    	var url = urlini+ 'getAutoZipcode';
+        var city = $("#ship_city").val();
+    	var state = $("#ship_state").val();
+    	var country = $("#ship_country").val();
+    	$.getJSON( url, {   country: country,
+                            state : state,
+                            city : city },
+                    function(result){
+                        $("#user_zipcode").val(result.zipcode);
 		});
     }
     
@@ -471,10 +538,86 @@ function queryProduct(){
         	$("#confirmModal").modal('hide');
         });
         
+        
         $('#confirmModal').on('hidden.bs.modal', function (e) {
 		  // do something...
 		  $(".deleteAllCart").prop('checked',false);
 		});
+		
+		$('#stage2Btn').click(function () {
+			$('#new_unit_modal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
+			
+			$('#closeBtn').hide();
+			
+			$('#stage_one').hide();
+			$('#stage_two').show();
+			
+			$(this).hide();
+			
+			$('#stage3Btn').removeClass('hide');
+			$('#goStage1').removeClass('hide');
+			
+		});
+		
+		$('#stage3Btn').click(function() {
+			$('#new_unit_modal .modal-title').text('New Unit - Stage 3 - Activity Creation');
+			
+			$('#closeBtn').hide();
+			$('#stage_two').hide();
+			$('#stage_three').show();
+			$(this).hide();
+			
+			$('#goStage2').removeClass('hide').show();
+			$('#goStage1').addClass('hide');
+			$('#stage3Btn').addClass('hide');
+			
+		});
+		
+		$('#goStage1').click(function () {
+			$('#new_unit_modal .modal-title').text('New Unit - Stage 1 - Desired Results');
+			$('#stage2Btn').show();
+			$('#closeBtn').show();
+			$('#stage3Btn').addClass('hide');
+			$('#stage_two').hide();
+			$('#stage_one').show();
+			
+			$(this).addClass('hide');
+			
+		});
+		
+		$('#goStage2').click(function () {
+			$('#new_unit_modal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
+			
+			$('#closeBtn').hide();
+			
+			$('#stage_three').hide();
+			$('#stage_two').show();
+			
+			$(this).hide();
+			
+			$('#stage3Btn').removeClass('hide');
+			$('#stage3Btn').show();
+			$('#goStage1').removeClass('hide');
+			
+		});
+		
+        $( "#ship_city" ).autocomplete({
+			source: function(req, add){
+			thisClass.getAutoCity(add);
+                }
+        });
+
+        $( "#ship_state" ).autocomplete({
+		source: function(req, add){
+			thisClass.getAutoState(add);
+                }
+        });
+
+        $( "#ship_zipcode" ).focus(function(){
+        	if($(this).val() == ''){
+        		thisClass.getAutoZipcode();
+        	}
+        });
 		
 		thisClass.getSessionCart();
        
