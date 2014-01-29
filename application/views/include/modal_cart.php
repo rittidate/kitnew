@@ -24,7 +24,7 @@
                     <tbody class="cartdetail_tr">
                             <tr class="footer_grid">
                                 <td colspan="4" align="right"><?php echo $plabel_subtotal; ?></td>
-                                <td colspan="2">
+                                <td colspan="2" align="right">
                                 	<input type="hidden" id="cart_subtotal" name="subtotal" />
                                 	<input type="hidden" id="cart_subweight" name="subweight" />
                                 	<span class="text_subtotal"></span>

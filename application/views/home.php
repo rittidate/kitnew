@@ -229,12 +229,10 @@ function queryProduct(){
         $(".text_subtotal").text(subtotal);
         
         //subweight
-        $("#cart_subtotal").val(subtotal);
         $("#cart_subweight").val(weightTotal);
         
         $(".cartNotify").text(thisClass.objProductCart.length);
         
-        console.log(thisClass.objProductCart);
         if(thisClass.objProductCart.length == 0){
         	$('#stage2Btn').addClass('hide');
         	
@@ -250,6 +248,25 @@ function queryProduct(){
             $.each(thisClass.objProductCart, function(ini, val){
                     if(val.id != id){
                         obj.push(val);
+                    }
+            });
+            thisClass.objProductCart = obj;
+            
+            thisClass.buildCartDetailGrid();
+        });
+        
+        $(".productCart_qty").change(function(){
+        	var id = $(this).data('id');
+        	var qty = $(this).val();
+        	var obj = [];
+        	
+            $.each(thisClass.objProductCart, function(ini, val){
+                    if(val.id == id){
+                    	val.qty = qty;
+                    	val.total =  val.price * qty;
+                        obj.push(val);
+                    }else{
+                    	obj.push(val);
                     }
             });
             thisClass.objProductCart = obj;
@@ -374,7 +391,7 @@ function queryProduct(){
                             state : state,
                             city : city },
                     function(result){
-                        $("#user_zipcode").val(result.zipcode);
+                        $("#ship_zipcode").val(result.zipcode['zipcode']);
 		});
     }
     
@@ -487,6 +504,49 @@ function queryProduct(){
     	 $("#confirmModal").modal('show');
     }
 
+	this.shipAddressSession = function(){
+        var odata = {};
+        var url = urlini+ 'shipAddressSession';
+
+        odata = thisClass.oData(odata);
+        $.post(url,odata,
+        function(result){
+            
+        });
+	}
+	
+    this.oData = function(odata){
+        $("[id^='ship_']").each(function(){
+            var attrName = $(this).attr("name");
+            var thisType = $(this).attr("type");
+
+            var thisVal;
+            if(thisType == 'checkbox'){
+                if($(this).prop('checked')){
+                        thisVal = 'Y';
+                }else{
+                        thisVal = 'N';
+                }
+            }else{
+                thisVal = $(this).val();
+            }
+
+            if(attrName !== undefined){
+                var data = {};
+                if(thisVal !== null){
+                    if(typeof thisVal == 'object'){
+                            data[attrName] = thisClass.objToStr(thisVal);
+                    }else{
+                            data[attrName] = thisVal;
+                    }
+                }
+            }
+            $.extend(odata, data);
+        })
+
+        return odata;
+    }
+	
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
             var id = $(this).data('id');
@@ -546,7 +606,7 @@ function queryProduct(){
 		});
 		
 		$('#stage2Btn').click(function () {
-			$('#new_unit_modal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
+			$('#cartModal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
 			
 			$('#closeBtn').hide();
 			
@@ -561,7 +621,7 @@ function queryProduct(){
 		});
 		
 		$('#stage3Btn').click(function() {
-			$('#new_unit_modal .modal-title').text('New Unit - Stage 3 - Activity Creation');
+			$('#cartModal .modal-title').text('New Unit - Stage 3 - Activity Creation');
 			
 			$('#closeBtn').hide();
 			$('#stage_two').hide();
@@ -572,6 +632,7 @@ function queryProduct(){
 			$('#goStage1').addClass('hide');
 			$('#stage3Btn').addClass('hide');
 			
+			thisClass.shipAddressSession();
 		});
 		
 		$('#goStage1').click(function () {

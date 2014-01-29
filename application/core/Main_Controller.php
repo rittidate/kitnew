@@ -198,7 +198,7 @@ class Main_Controller extends MY_Controller
 		$data["label_ext"] = $this->lang->line("label_ext");
 		$data["label_fax"] = $this->lang->line("label_fax");
 		
-		if(!empty($this->session['user'])){
+		if(!empty($this->session['user']) && empty($this->session['ship'])){
 	       $user = $this->db->where('id', $this->session['user'])
 	               ->get('kt_customer')->row();
 				   
@@ -221,7 +221,27 @@ class Main_Controller extends MY_Controller
 	       $data["telephone_ext"] = $user->telephone_ext;
 	       $data["fax"] = $user->fax;
 	       $data["fax_ext"] = $user->fax_ext;
-       }else{
+        }else if(!empty($this->session['ship'])){
+	       //$data["id"] = $user->id;
+	       $data["firstname"] = $this->session['ship']['firstname'];
+	       $data["lastname"] = $this->session['ship']['lastname'];
+	       $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), $this->session['ship']['salutation'], 'class="form-control" id="ship_salutation"');
+	       $data["gender"] = form_dropdown('gender', $this->kv->getGender(), $this->session['ship']['gender'], 'class="form-control" id="ship_gender"');
+	       $data["birth"] = $this->session['ship']['birth'];
+	       $data["address1"] = $this->session['ship']['address1'];
+	       $data["address2"] = $this->session['ship']['address2'];
+	       $data["address3"] = $this->session['ship']['address3'];
+	       $data["address4"] = $this->session['ship']['address4'];
+	       $data["city"] = $this->session['ship']['city'];
+	       $data["state"] = $this->session['ship']['state'];
+	       $data["country"] = form_dropdown('country', $this->kv->getCountry(), $this->session['ship']['country'], 'class="form-control" id="ship_country"');
+	       $data["zipcode"] = $this->session['ship']['zipcode'];
+	       $data["mobile"] = $this->session['ship']['mobile'];
+	       $data["telephone"] = $this->session['ship']['telephone'];
+	       $data["telephone_ext"] = $this->session['ship']['telephone_ext'];
+	       $data["fax"] = $this->session['ship']['fax'];
+	       $data["fax_ext"] = $this->session['ship']['fax_ext'];
+		}else{
        	   $data["id"] = '';
 	       $data["firstname"] = '';
 	       $data["lastname"] = '';
