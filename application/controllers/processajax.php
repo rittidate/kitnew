@@ -388,7 +388,7 @@ class Processajax extends Main_Controller {
 					$response->rows[$i]['shiptype_id'] = $row_weight->ship_type_id;
 					$response->rows[$i]['shiptype_name'] = $row_weight->ship_type_name;
 					$response->rows[$i]['name'] = $row_weight->ship_company_name;
-					$response->rows[$i]['shipprice'] = $row_weight->shipprice;
+					$response->rows[$i]['shipprice'] = $row_weight->shipprice + $shipprice;
 					$i++;
 				}
 				
