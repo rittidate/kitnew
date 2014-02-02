@@ -62,7 +62,7 @@ function queryProduct(){
         });
     }
     
-    this.getProduct = function(menuid){
+    this.getProduct = function(){
     	var url = urlini+ 'getProduct';
     	var html = '';
     	var image,volumn,unit;
@@ -71,7 +71,7 @@ function queryProduct(){
     		thisClass.pageSelect = 1;
     	}
     	
-        $.getJSON( url, {step : thisClass.step, menuid : thisClass.menuid , page : thisClass.pageSelect },
+        $.getJSON( url, {step : thisClass.step, menuid : thisClass.menuid , keyword: thisClass.keyword, page : thisClass.pageSelect },
             function(result){
             	thisClass.pagerNumber = result.page;
             	thisClass.getPager();
@@ -126,10 +126,13 @@ function queryProduct(){
     	var startpage,endpage;
     	var len = thisClass.pagerNumber;
     	var html = '';
+    	var htmlMini = '';
     	
 		if(thisClass.pageSelect > 1){
 			html += '<li><a class="pagerNumber" data-number="prev" href="#page">&laquo;</a></li>';
+			htmlMini += '<li class="previous"><a class="pagerNumber" data-number="prev" href="#page">&larr; Older</a></li>';
 		}
+
     	
     	if(thisClass.pagerNumber > thisClass.limitPage){
 			if(thisClass.pagerNumber > (thisClass.pageSelect + thisClass.limitPage -1)){
@@ -154,9 +157,11 @@ function queryProduct(){
         
     	if(thisClass.pageSelect < thisClass.pagerNumber){
     		html += '<li><a class="pagerNumber" data-number="next" href="#page">&raquo;</a></li>';
+    		htmlMini += '<li class="next"><a class="pagerNumber" data-number="next" href="#page">Next &rarr;</a></li>';
     	}
         
         $(".pagerProduct").html(html);
+        $(".pagerProductMini").html(htmlMini);
         
         $(".pagerProduct li[data-id='"+thisClass.pageSelect+"']").addClass('active');
         
@@ -184,8 +189,8 @@ function queryProduct(){
     }
     
     this.buildSelectQty = function(qty, pid){
-        //var len = 99;
-        var len = qty;
+        var len = 99;
+        //var len = qty;
         var option = '';
         option += "<select class='product_qty' data-id='"+pid+"'>";
         if(len > 0){
@@ -212,7 +217,7 @@ function queryProduct(){
                 obj.push({id : val.id, qty : val.qty});
                 tr +=  "<tr class='detail_grid'>";
                 tr += "<td align='center'><a href='#del' class='product_remove' data-id='"+val.id+"'><i class='fa fa-times'></i></a></td>";
-                tr += "<td>"+val.barcode+"</td>";
+                tr += "<td class='hidden-xs'>"+val.barcode+"</td>";
                 tr += "<td>"+val.name+"</td>";
                 tr += "<td align='center'>"+val.price+"</td>";
                 tr += "<td>"+thisClass.buildSelectCartQty(val.qty, val.id, val.stock)+"</td>";
@@ -239,7 +244,7 @@ function queryProduct(){
         }else{
         	$('#stage2Btn').removeClass('hide').show();
         }
-        //thisClass.getRatePrice(subtotal, weightTotal);
+        thisClass.getRatePrice(subtotal, weightTotal);
         //thisClass.orderDetailGridevent();
         
         $(".product_remove").click(function(){
@@ -323,20 +328,39 @@ function queryProduct(){
     }
     
     this.getRatePrice = function(subtotal, weight){
-        var url = $(aInfo.grd).getGridParam('url');
+        var url = urlini+ 'getRatePrice';
+        var htmlTr = '';
+        var htmlRadio = '';
     	$.getJSON(
                     url,
-                    { 	oper : 'getRatePrice',
+                    {
                         subtotal : subtotal,
-                        city : $("#txt_city").val(),
-                        state : $("#txt_state").val(),
-                        country : $("#select_country").val(),
-                        weight : weight,
-                    	shipment_id : $("#select_shipment_id").val()},
+                        city : $("#ship_city").val(),
+                        state : $("#ship_state").val(),
+                        country : $("#ship_country").val(),
+                        weight : weight
+                    },
                     function(result){
-                        var grandtotal = subtotal + result;
-                        $("#txt_shipprice").val(result);
-                        $("#txt_grandtotal").val(grandtotal);
+                        var obj = [];
+                     	if(result !== null && result !==''){
+			        		console.log(result);
+			        		htmlTr += "<tr><th><h4>Shipment</h4></th></tr>";
+			        		$.each(result.rows, function(ini, val){
+								if(obj.indexOf(val.id) == -1){
+				                    htmlTr += "<tr><td class='cartShipLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
+				                    obj.push(val.id);    
+				                }
+			        		});
+			        		$(".cartShipment").html(htmlTr);
+			        		$.each(result.rows, function(ini, val){
+								htmlRadio = '<div class="radio"><label><input type="radio" name="optionsRadios" id="optionsRadios'+val.shiptype_id+'" value="'+val.shipprice+'">';
+						    	htmlRadio += val.shiptype_name + " " + val.shipprice + " บาท";
+						  		htmlRadio += '</label>';
+						  		htmlRadio += '</div>';
+						  		$(".cartShipLabel[data-num='"+val.id+"']").append(htmlRadio);
+			        		});
+			        		
+			        	}
 		});
     }
     
@@ -462,41 +486,43 @@ function queryProduct(){
 			//var stock = $(".product_stock[data-id='"+id+"']").val();
 			var stock = 99;
 			var weight = $(".product_weight[data-id='"+id+"']").val();
-			var obj= { 
-	        		 	id : id,
-						 barcode : barcode,
-						 name : name,
-						 price : price,
-						 qty : qty,
-						 total : price * qty,
-						 stock : stock,
-						 weight : weight
-						};
-			//console.log(thisClass.objProductCart);
-			if(thisClass.objProductCart != undefined || thisClass.objProductCart != null){
-				var inArray = [];
-				thisClass.objProductCartAdd = [];
-				$.each(thisClass.objProductCart, function(ini, val){
-					inArray.push(val.id);
-				});
-                $.each(thisClass.objProductCart, function(ini, val){
-	                    if(val.id == id){
+			if(qty !== null){
+				var obj= { 
+		        		 	id : id,
+							 barcode : barcode,
+							 name : name,
+							 price : price,
+							 qty : qty,
+							 total : price * qty,
+							 stock : stock,
+							 weight : weight
+							};
+				//console.log(thisClass.objProductCart);
+				if(thisClass.objProductCart != undefined || thisClass.objProductCart != null){
+					var inArray = [];
+					thisClass.objProductCartAdd = [];
+					$.each(thisClass.objProductCart, function(ini, val){
+						inArray.push(val.id);
+					});
+	                $.each(thisClass.objProductCart, function(ini, val){
+		                    if(val.id == id){
+		                        thisClass.objProductCartAdd.push(obj);
+		                    }else{
+		                    	thisClass.objProductCartAdd.push(val);
+		                    }   
+	                });
+	                
+					if(inArray.indexOf(id) == -1){
 	                        thisClass.objProductCartAdd.push(obj);
-	                    }else{
-	                    	thisClass.objProductCartAdd.push(val);
-	                    }   
-                });
-                
-				if(inArray.indexOf(id) == -1){
-                        thisClass.objProductCartAdd.push(obj);
-                }
-                
-                thisClass.objProductCart = thisClass.objProductCartAdd;
-				
-			}else{
-				thisClass.objProductCart = [obj];
+	                }
+	                
+	                thisClass.objProductCart = thisClass.objProductCartAdd;
+					
+				}else{
+					thisClass.objProductCart = [obj];
+				}
+				thisClass.buildCartDetailGrid();
 			}
-			thisClass.buildCartDetailGrid();
 		});
     }
     
@@ -511,7 +537,7 @@ function queryProduct(){
         odata = thisClass.oData(odata);
         $.post(url,odata,
         function(result){
-            
+
         });
 	}
 	
@@ -553,9 +579,9 @@ function queryProduct(){
             thisClass.step = 2;
             thisClass.menuid = id;
             thisClass.pageSelect = 1;
+            thisClass.keyword = '';
             thisClass.buildMenuStep3();
             thisClass.getProduct();
-            
         });
         
         thisClass.menuStepEvent();
@@ -565,6 +591,7 @@ function queryProduct(){
             thisClass.step = 1;
             thisClass.menuid = id;
             thisClass.pageSelect = 1;
+            thisClass.keyword = '';
             thisClass.buildMenuStep2();
             thisClass.getProduct();
         });
@@ -574,6 +601,7 @@ function queryProduct(){
             thisClass.step = 2;
             thisClass.menuid = id;
             thisClass.pageSelect = 1;
+            thisClass.keyword = '';
             thisClass.buildMenuStep3();
             thisClass.getProduct();
         });
@@ -583,8 +611,17 @@ function queryProduct(){
 			thisClass.step = 3;
 			thisClass.menuid = id;
 			thisClass.pageSelect = 1;
+			thisClass.keyword = '';
             thisClass.buildMenuStep3();
             thisClass.getProduct();
+        });
+        
+        $(".search_form").submit(function(){
+        	thisClass.pageSelect = 1;
+            thisClass.keyword = $(".search_input").val();
+            thisClass.getProduct();
+            $(".search_input").val('');
+        	return false;
         });
         
         $(".deleteAllCart").click(function(){
@@ -714,13 +751,23 @@ function queryProduct(){
 		</div>
 		<div class="container">
 			<div class="visible-xs">
-				<ul class="pager">
-				  <li class="previous"><a href="#">&larr; Older</a></li>
-				  <li class="next"><a href="#">Newer &rarr;</a></li>
+				<ul class="pager pagerProductMini">
 				</ul>
 			</div>
 		</div>		
 	</div>
       <div id="productQuery" class="row"></div>
+	<div class="row">
+		<div class="hidden-xs pull-right">
+			<ul class="pagination pagerProduct">
+			</ul>
+		</div>
+		<div class="container">
+			<div class="visible-xs">
+				<ul class="pager pagerProductMini">
+				</ul>
+			</div>
+		</div>		
+	</div>
 	
 </div>

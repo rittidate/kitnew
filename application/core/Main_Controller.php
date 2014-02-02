@@ -53,6 +53,27 @@ class Main_Controller extends MY_Controller
             $this->session = unserialize($session->sessiondata);
        }
     }
+	
+	public function getIncludeWeight()
+	{
+	    $SQL = "SELECT value FROM kt_define_data_type WHERE ref_data_type =  'WEIGHT_PACKAGE' ";
+		$result = $this->db->query($SQL)->result();
+	    return $result[0]->value;
+	}
+	
+	public function getServiceCharge()
+	{
+		$SQL = "SELECT value FROM kt_define_data_type WHERE ref_data_type =  'SERVICE_CHARGE' ";
+		$result = $this->db->query($SQL)->result();
+	    return $result[0]->value;
+	}
+	
+	public function getIncludeVat()
+	{
+		$SQL = "SELECT value FROM kt_define_data_type WHERE ref_data_type =  'INCLUDE_VAT' ";
+		$result = $this->db->query($SQL)->result();
+	    return $result[0]->value;
+	}
 
     public function loadHeader()
     {

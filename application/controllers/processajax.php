@@ -185,39 +185,48 @@ class Processajax extends Main_Controller {
     }
 	
     public function getProduct(){
-        $step = $_REQUEST['step'];
-		$menuid = $_REQUEST['menuid'];
+        $step = !empty($_REQUEST['step']) ? trim($_REQUEST['step']) : '';
+		$menuid = !empty($_REQUEST['menuid']) ? trim($_REQUEST['menuid']) : '';
 		$page = $_REQUEST['page'];
+		$keyword = !empty($_REQUEST['keyword']) ? trim($_REQUEST['keyword']) : '';
 		$where = "";
 		$numberLimit = 9;
 		
-		if(!empty($step) && !empty($menuid)){
-			if($step == 1){
-				$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
-                                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
-                                    and parentid = '{$menuid}')";
-    			$result = $this->db->query($SQL)->result();
-				$pmenuid = array();
-				foreach($result as $row){
-					array_push($pmenuid, $row->id);
-				}
-				$pmenuid = implode(",", $pmenuid);
-				$where .= " and pmenu_id in ($pmenuid)";
-			}else if($step == 2){
-				$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
-                                and parentid = '{$menuid}'";
-    			$result = $this->db->query($SQL)->result();
-				$pmenuid = array();
-				foreach($result as $row){
-					array_push($pmenuid, $row->id);
-				}
-				$pmenuid = implode(",", $pmenuid);
-				$where .= " and pmenu_id in ($pmenuid)";
-			}else if($step == 3){
-				$where .= " and pmenu_id = $menuid";
-			}
-			
+		if(!empty($keyword)){
+              $where .= " and ( lower(ifnull(kp.name_th,'')) like lower('%".$keyword."%')  ) ";
+              $where .= "or ( lower(ifnull(kp.name_en,'')) like lower('%".$keyword."%')  ) ";
+              $where .= "or ( lower(ifnull(kp.barcode,'')) like lower('%".$keyword."%')  ) ";
+              $where .= "or ( lower(ifnull(kp.description,'')) like lower('%".$keyword."%')  ) ";
 
+		}else{
+			if(!empty($step) && !empty($menuid)){
+				if($step == 1){
+					$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+	                                and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+	                                    and parentid = '{$menuid}')";
+	    			$result = $this->db->query($SQL)->result();
+					$pmenuid = array();
+					foreach($result as $row){
+						array_push($pmenuid, $row->id);
+					}
+					$pmenuid = implode(",", $pmenuid);
+					$where .= " and pmenu_id in ($pmenuid)";
+				}else if($step == 2){
+					$SQL = "select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+	                                and parentid = '{$menuid}'";
+	    			$result = $this->db->query($SQL)->result();
+					$pmenuid = array();
+					foreach($result as $row){
+						array_push($pmenuid, $row->id);
+					}
+					$pmenuid = implode(",", $pmenuid);
+					$where .= " and pmenu_id in ($pmenuid)";
+				}else if($step == 3){
+					$where .= " and pmenu_id = $menuid";
+				}
+				
+	
+			}
 		}
 		if(empty($page)){
 			$limit = "LIMIT $numberLimit";
@@ -242,6 +251,7 @@ class Processajax extends Main_Controller {
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
 				where kp.is_active='Y' and kp.is_delete='N' {$where} {$limit}";
+		//var_dump($SQL);
 
         //$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kp.stock, kp.weight from kt_product as kp left join kt_product_stock as kps on (kp.id = kps.pid) where kps.pstock = 0";
         $result = $this->db->query($SQL)->result();
@@ -317,6 +327,89 @@ class Processajax extends Main_Controller {
 		 }
 
     }
+    
+    public function getRatePrice(){
+    	$city = $_REQUEST["city"];
+		$country = $_REQUEST["country"];
+		$state = $_REQUEST["state"];
+		$subtotal = $_REQUEST["subtotal"];
+		$weight = $_REQUEST["weight"];
+		
+		
+		$includeWeight = $this->getIncludeWeight();
+        $serviceCharge = $this->getServiceCharge();
+		
+		$SQL = "SELECT sht.data_type_id as shipmentid FROM kt_ship_company as shc
+						JOIN kt_ship_type as sht ON (sht.ship_company_id = shc.id) WHERE shc.is_active = 'Y' and shc.is_delete = 'N' ORDER BY shc.id";
+		$result = $this->db->query($SQL)->result();
+		$i = 0;
+		foreach($result as $row){
+         	$shipment_id = $row->shipmentid;
+			$SQL_ZONE = "SELECT shr.rate_price as shipprice, sht.ship_company_id as ship_company_id, shc.name AS ship_company_name, sht.data_type_id as ship_type_id, kddt.data_type_name as ship_type_name FROM kt_ship_rate as shr
+		                    join kt_ship_type as sht on (sht.id = shr.ship_type_id and sht.ship_type_ref = 'AREA')
+		                    join kt_define_data_type as kddt on (kddt.id = sht.data_type_id)
+		                    join kt_ship_company as shc on (shc.id = sht.ship_company_id)
+		                    WHERE sht.data_type_id = {$shipment_id} and shr.min < '{$subtotal}' and shr.max >= '{$subtotal}'
+		                    and shr.zone = (
+		                    SELECT ci.zone from kt_country as c
+		                    join kt_state as s on (s.country_id = c.id)
+		                    join kt_city as ci on (ci.state_id = s.id)
+		                    WHERE c.name = '{$country}' and s.name_th = '{$state}' and ci.name = '{$city}') and shr.is_active = 'Y' and shr.is_delete = 'N'";
+			$result_zone = $this->db->query($SQL_ZONE)->result();
+			
+			
+			foreach ($result_zone as $row_zone){
+				$response->rows[$i]['id'] = $row_zone->ship_company_id;
+				$response->rows[$i]['shiptype_id'] = $row_zone->ship_type_id;
+				$response->rows[$i]['shiptype_name'] = $row_zone->ship_type_name;
+				$response->rows[$i]['name'] = $row_zone->ship_company_name;
+				$response->rows[$i]['shipprice'] = $row_zone->shipprice;
+				$i++;
+			}
+			
+			//WEIGHT
+            $maxWeightPrice = $this->getMaxWeightPrice($shipment_id);
+			if(!empty($maxWeightPrice->maxweight) and !empty($maxWeightPrice->maxprice)){
+	            $maxWeight = !empty($maxWeightPrice->maxweight) ? $maxWeightPrice->maxweight : '';
+	            $maxPrice = !empty($maxWeightPrice->maxprice) ? $maxWeightPrice->maxprice : '';
+	            $weigth_new = $weight + ($weight*$includeWeight);
+	            $weight_over = floor($weigth_new/$maxWeight);
+	            $shipprice = $weight_over*$maxPrice;
+	            
+	            $queryWeight =  $weigth_new % $maxWeight;
+				$SQL_WEIGHT = "SELECT shr.rate_price as shipprice, sht.ship_company_id as ship_company_id, shc.name AS ship_company_name, sht.data_type_id as ship_type_id, kddt.data_type_name as ship_type_name FROM kt_ship_rate as shr
+		                    join kt_ship_type as sht on (sht.id = shr.ship_type_id and sht.ship_type_ref = 'WEIGHT')
+		                    join kt_define_data_type as kddt on (kddt.id = sht.data_type_id)
+		                    join kt_ship_company as shc on (shc.id = sht.ship_company_id)
+		                    WHERE sht.data_type_id = {$shipment_id} and shr.min < '{$queryWeight}' and shr.max >= '{$queryWeight}' and shr.is_active = 'Y' and shr.is_delete = 'N'"; 
+				$result_weight = $this->db->query($SQL_WEIGHT)->result();
+				foreach ($result_weight as $row_weight){
+					$response->rows[$i]['id'] = $row_weight->ship_company_id;
+					$response->rows[$i]['shiptype_id'] = $row_weight->ship_type_id;
+					$response->rows[$i]['shiptype_name'] = $row_weight->ship_type_name;
+					$response->rows[$i]['name'] = $row_weight->ship_company_name;
+					$response->rows[$i]['shipprice'] = $row_weight->shipprice;
+					$i++;
+				}
+				
+			}
+		}
+
+        echo json_encode($response);
+
+    }
+
+     private function getMaxWeightPrice($shipid){
+         if(!empty($shipid)){
+            $SQL = "SELECT max(shr.max) as maxweight, max(shr.rate_price) as maxprice  FROM kt_ship_rate as shr
+                    join kt_ship_type as sht on (sht.id = shr.ship_type_id and sht.ship_type_ref = 'WEIGHT')
+                    WHERE sht.data_type_id = {$shipid} and shr.is_active = 'Y' and shr.is_delete = 'N'";
+
+			$result = $this->db->query($SQL)->result();
+		    return $result[0];
+         }
+     }
+
     
     public function shipAddressSession(){
         $firstname = $_REQUEST['firstname'];

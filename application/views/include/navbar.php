@@ -65,13 +65,13 @@
           </ul>
           
         <div class="col-sm-3 col-md-3 visible-lg visible-md pull-right">
-        <form class="navbar-form" role="search">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
-            <div class="input-group-btn">
-                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-            </div>
-        </div>
+        <form class="navbar-form search_form" role="search">
+	        <div class="input-group">
+	            <input type="text" class="form-control search_input" placeholder="Search" name="srch-term">
+	            <div class="input-group-btn">
+	                <button class="btn btn-default search_submit" type="submit"><i class="fa fa-search"></i></button>
+	            </div>
+	        </div>
         </form>
         </div>
         </div><!--/.nav-collapse -->
