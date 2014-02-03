@@ -334,6 +334,7 @@ class Processajax extends Main_Controller {
 		$state = $_REQUEST["state"];
 		$subtotal = $_REQUEST["subtotal"];
 		$weight = $_REQUEST["weight"];
+		$shipType =  FALSE;
 		
 		
 		$includeWeight = $this->getIncludeWeight();
@@ -359,12 +360,15 @@ class Processajax extends Main_Controller {
 			
 			
 			foreach ($result_zone as $row_zone){
-				$response->rows[$i]['id'] = $row_zone->ship_company_id;
-				$response->rows[$i]['shiptype_id'] = $row_zone->ship_type_id;
-				$response->rows[$i]['shiptype_name'] = $row_zone->ship_type_name;
-				$response->rows[$i]['name'] = $row_zone->ship_company_name;
-				$response->rows[$i]['shipprice'] = $row_zone->shipprice;
+				$response->shipprice[$i]['id'] = $row_zone->ship_company_id;
+				$response->shipprice[$i]['shiptype_id'] = $row_zone->ship_type_id;
+				$response->shipprice[$i]['shiptype_name'] = $row_zone->ship_type_name;
+				$response->shipprice[$i]['name'] = $row_zone->ship_company_name;
+				$response->shipprice[$i]['shipprice'] = $row_zone->shipprice;
 				$i++;
+				if($country == 'Thailand'){
+					$shipType =  TRUE;
+				}
 			}
 			
 			//WEIGHT
@@ -375,28 +379,54 @@ class Processajax extends Main_Controller {
 	            $weigth_new = $weight + ($weight*$includeWeight);
 	            $weight_over = floor($weigth_new/$maxWeight);
 	            $shipprice = $weight_over*$maxPrice;
-	            
 	            $queryWeight =  $weigth_new % $maxWeight;
+				
 				$SQL_WEIGHT = "SELECT shr.rate_price as shipprice, sht.ship_company_id as ship_company_id, shc.name AS ship_company_name, sht.data_type_id as ship_type_id, kddt.data_type_name as ship_type_name FROM kt_ship_rate as shr
 		                    join kt_ship_type as sht on (sht.id = shr.ship_type_id and sht.ship_type_ref = 'WEIGHT')
 		                    join kt_define_data_type as kddt on (kddt.id = sht.data_type_id)
 		                    join kt_ship_company as shc on (shc.id = sht.ship_company_id)
 		                    WHERE sht.data_type_id = {$shipment_id} and shr.min < '{$queryWeight}' and shr.max >= '{$queryWeight}' and shr.is_active = 'Y' and shr.is_delete = 'N'"; 
+
 				$result_weight = $this->db->query($SQL_WEIGHT)->result();
 				foreach ($result_weight as $row_weight){
-					$response->rows[$i]['id'] = $row_weight->ship_company_id;
-					$response->rows[$i]['shiptype_id'] = $row_weight->ship_type_id;
-					$response->rows[$i]['shiptype_name'] = $row_weight->ship_type_name;
-					$response->rows[$i]['name'] = $row_weight->ship_company_name;
-					$response->rows[$i]['shipprice'] = $row_weight->shipprice + $shipprice;
+					$response->shipprice[$i]['id'] = $row_weight->ship_company_id;
+					$response->shipprice[$i]['shiptype_id'] = $row_weight->ship_type_id;
+					$response->shipprice[$i]['shiptype_name'] = $row_weight->ship_type_name;
+					$response->shipprice[$i]['name'] = $row_weight->ship_company_name;
+					$response->shipprice[$i]['shipprice'] = $row_weight->shipprice + $shipprice + $serviceCharge;
 					$i++;
 				}
 				
 			}
 		}
 
-        echo json_encode($response);
+		if(!empty($response)){
+			$response = (object) array_merge((array)$response, (array)$this->getPaymentTerm($shipType));
+        	echo json_encode($response);
+        }else{
+        	echo json_encode('');
+        }
 
+    }
+    
+    private function getPaymentTerm($shipType = False){
+    	$where = '';
+    	if(!$shipType){
+    		$where = " and data_type_name <> 'เงินสด'";
+    	}
+    	
+        $SQL = "SELECT id, data_type_name, description FROM kt_define_data_type
+        		WHERE is_delete = 'N' and is_active = 'Y' and ref_data_type = 'PAYMENT_TYPE' $where ORDER BY id ";
+
+		$result = $this->db->query($SQL)->result();
+		$i=0;
+        foreach($result as $row) {
+            $response->payment[$i]['id']=$row->id;
+            $response->payment[$i]['name']=$row->data_type_name;
+			$response->payment[$i]['description']=$row->description;
+			$i++;
+		}
+        return $response;
     }
 
      private function getMaxWeightPrice($shipid){

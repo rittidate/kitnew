@@ -30,25 +30,26 @@
                                 	<span class="text_subtotal"></span>
                             	</td>
                             </tr>
-                            <!--
                             <tr class="footer_grid cartdetail_shipprice">
                                 <td colspan="4" align="right"><?php echo $plabel_shipprice; ?></td>
-                                <td colspan="2"><input type="hidden" id="cart_shipprice" name="shipprice" /><span class="text_shipprice"></span></td>
+                                <td colspan="2" align="right"><input type="hidden" id="cart_shipprice" name="shipprice" /><span class="text_shipprice"></span></td>
                             </tr>
-                            <tr class="footer_grid">
+                            <tr class="footer_grid cartdetail_grandtotal">
                                 <td colspan="4" align="right"><?php echo $plabel_grandtotal; ?></td>
-                                <td colspan="2"><input type="hidden" id="cart_grandtotal" name="grandtotal" /><span class="text_grandtotal"></span></td>
+                                <td colspan="2" align="right"><input type="hidden" id="cart_grandtotal" name="grandtotal" /><span class="text_grandtotal"></span></td>
                             </tr>
-                            -->
                     </tbody>
                 </table>
                 
-                <table class="table table-striped cartShipment">
+                <table class="table table-responsive table-striped cartShipment">
+                </table>
+                
+                <table class="table table-responsive table-striped cartPayment">
                 </table>
 			</div>
 			
 			<div class="col-lg-12" id="stage_two" style="display: none;">
-				<form class="form-horizontal" id="userModalForm" role="form">
+				<form class="form-horizontal" id="shipModalForm" role="form">
 		            <div class="form-group">
 		                <label for="firstname" class="col-sm-3 control-label text-right"><?php echo $label_salutation; ?></label>
 		                <div class="col-sm-8">

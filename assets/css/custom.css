@@ -5,3 +5,7 @@
 body {
    padding-top: 15px;
 }
+
+.error {
+	color: red;
+}

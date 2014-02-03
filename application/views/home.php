@@ -278,6 +278,8 @@ function queryProduct(){
             
             thisClass.buildCartDetailGrid();
         });
+        
+
     }
     
     this.saveSessionCart = function(obj){
@@ -329,8 +331,12 @@ function queryProduct(){
     
     this.getRatePrice = function(subtotal, weight){
         var url = urlini+ 'getRatePrice';
-        var htmlTr = '';
-        var htmlRadio = '';
+        var htmlTrShip = '';
+        var htmlRadioShip = '';
+        var htmlTrPay = '';
+        var htmlRadioPay = '';
+        var grandtotal=0;
+        var obj;
     	$.getJSON(
                     url,
                     {
@@ -341,26 +347,89 @@ function queryProduct(){
                         weight : weight
                     },
                     function(result){
-                        var obj = [];
+                        
                      	if(result !== null && result !==''){
-			        		console.log(result);
-			        		htmlTr += "<tr><th><h4>Shipment</h4></th></tr>";
-			        		$.each(result.rows, function(ini, val){
+                     		obj = [];
+			        		htmlTrShip += "<tr><th><h4 class='shipLabel'>Shipment</h4></th></tr>";
+			        		$.each(result.shipprice, function(ini, val){
 								if(obj.indexOf(val.id) == -1){
-				                    htmlTr += "<tr><td class='cartShipLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
+				                    htmlTrShip += "<tr><td class='cartShipLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
 				                    obj.push(val.id);    
 				                }
 			        		});
-			        		$(".cartShipment").html(htmlTr);
-			        		$.each(result.rows, function(ini, val){
-								htmlRadio = '<div class="radio"><label><input type="radio" name="optionsRadios" id="optionsRadios'+val.shiptype_id+'" value="'+val.shipprice+'">';
-						    	htmlRadio += val.shiptype_name + " " + val.shipprice + " บาท";
-						  		htmlRadio += '</label>';
-						  		htmlRadio += '</div>';
-						  		$(".cartShipLabel[data-num='"+val.id+"']").append(htmlRadio);
+			        		$(".cartShipment").html(htmlTrShip);
+			        		$.each(result.shipprice, function(ini, val){
+			        			if(thisClass.shiptype != undefined && thisClass.shiptype == val.shiptype_id){
+									htmlRadioShip = '<div class="radio"><label><input type="radio" name="optionsShipment" class="optionsShipment" data-ship="'+val.shiptype_id+'" id="optionsShipment'+val.shiptype_id+'" value="'+val.shipprice+'" checked>';
+						    	}else{
+						    		htmlRadioShip = '<div class="radio"><label><input type="radio" name="optionsShipment" class="optionsShipment" data-ship="'+val.shiptype_id+'" id="optionsShipment'+val.shiptype_id+'" value="'+val.shipprice+'">';
+						    	}
+						    	htmlRadioShip += val.shiptype_name + " " + val.shipprice + " บาท";
+						  		htmlRadioShip += '</label>';
+						  		htmlRadioShip += '</div>';
+						  		$(".cartShipLabel[data-num='"+val.id+"']").append(htmlRadioShip);
 			        		});
 			        		
+			        		obj = [];
+			        		htmlTrPay += "<tr><th><h4 class='payLabel'>Payment</h4></th></tr>";
+			        		$.each(result.payment, function(ini, val){
+								if(obj.indexOf(val.id) == -1){
+				                    htmlTrPay += "<tr><td class='cartPayLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
+				                    obj.push(val.id);    
+				                }
+			        		});
+			        		$(".cartPayment").html(htmlTrPay);
+			        		$.each(result.payment, function(ini, val){
+			        			if(thisClass.paytype != undefined && thisClass.paytype == val.id){
+									htmlRadioPay = '<div class="radio"><label><input type="radio" name="optionsPayment" id="optionsPayment'+val.id+'" data-pay="'+val.id+'" value="'+val.id+'" checked>';
+						    	}else{
+						    		htmlRadioPay = '<div class="radio"><label><input type="radio" name="optionsPayment" class="optionsPayment" id="optionsPayment'+val.id+'" data-pay="'+val.id+'" value="'+val.id+'">';
+						    	}
+						    	htmlRadioPay += val.description;
+						  		htmlRadioPay += '</label>';
+						  		htmlRadioPay += '</div>';
+						  		$(".cartPayLabel[data-num='"+val.id+"']").append(htmlRadioPay);
+			        		});	
+			        		
+	        		        if($(".optionsShipment:checked").val() != undefined){
+					    		$(".cartdetail_shipprice").show();
+					        	$(".cartdetail_grandtotal").show();
+					        	
+						        $("#cart_shipprice").val($(".optionsShipment:checked").val());
+					        	$(".text_shipprice").text($(".optionsShipment:checked").val());
+					        	grandtotal = parseInt($(".optionsShipment:checked").val()) + parseInt(subtotal)
+						        $("#cart_grandtotal").val(grandtotal);
+					        	$(".text_grandtotal").text(grandtotal);
+					        	
+					        }else{
+					        	$(".cartdetail_shipprice").hide();
+					        	$(".cartdetail_grandtotal").hide();
+					        }		        		
+			        	}else{
+			        		$(".cartShipment").html('');
+			        		$(".cartPayment").html('');
+		        		
+					        $("#cart_shipprice").val('');
+				        	$(".text_shipprice").text('');
+		        		
+			        		$("#cart_grandtotal").val('');
+				        	$(".text_grandtotal").text('');
+				        	
+				        	$(".cartdetail_shipprice").hide();
+				        	$(".cartdetail_grandtotal").hide();
 			        	}
+			        	
+	        	        $(".optionsShipment").click(function(){
+				        	var shiptype = $(this).data('ship');
+				        	thisClass.shiptype = shiptype;
+				        	thisClass.buildCartDetailGrid();
+				        });
+				        
+				        $(".optionsPayment").click(function(){
+			        		var paytype = $(this).data('pay');
+				        	thisClass.paytype = paytype;
+				        	thisClass.buildCartDetailGrid();
+				        });
 		});
     }
     
@@ -643,17 +712,29 @@ function queryProduct(){
 		});
 		
 		$('#stage2Btn').click(function () {
-			$('#cartModal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
-			
-			$('#closeBtn').hide();
-			
-			$('#stage_one').hide();
-			$('#stage_two').show();
-			
-			$(this).hide();
-			
-			$('#stage3Btn').removeClass('hide');
-			$('#goStage1').removeClass('hide');
+			if(thisClass.shiptype != undefined && thisClass.paytype != undefined){
+				$('#cartModal .modal-title').text('New Unit - Stage 2 - Assessment Evidence');
+				
+				$('#closeBtn').hide();
+				
+				$('#stage_one').hide();
+				$('#stage_two').show();
+				
+				$(this).hide();
+				
+				$('#stage3Btn').removeClass('hide');
+				$('#goStage1').removeClass('hide');
+			}else if(thisClass.shiptype != undefined && thisClass.paytype == undefined){
+				$(".error").remove();
+				$("<label class='error'>Payment Not Select</label>").insertAfter('.payLabel');
+			}else if(thisClass.shiptype == undefined && thisClass.paytype != undefined){
+				$(".error").remove();
+				$("<label class='error'>Shipment Not Select</label>").insertAfter('.shipLabel');
+			}else if(thisClass.shiptype == undefined && thisClass.paytype == undefined){
+				$(".error").remove();
+				$("<label class='error'>Payment Not Select</label>").insertAfter('.payLabel');
+				$("<label class='error'>Shipment Not Select</label>").insertAfter('.shipLabel');
+			}
 			
 		});
 		
