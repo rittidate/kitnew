@@ -6,8 +6,9 @@
 				  <div class="panel panel-default">
 				    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $item['id'];?>">
 				      <h4 class="panel-title">
-				          	<span><?php echo $item['name'];?></span>
+				          	<a href="#collapse<?php echo $item['id'];?>" data-toggle="collapse" data-parent="#accordion"><?php echo $item['name'];?>
 					        <i class="pull-right fa fa-chevron-down"></i>
+					        </a>
 				      </h4>
 				    </div>
                                     

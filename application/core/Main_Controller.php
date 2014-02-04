@@ -219,6 +219,15 @@ class Main_Controller extends MY_Controller
 		$data["label_ext"] = $this->lang->line("label_ext");
 		$data["label_fax"] = $this->lang->line("label_fax");
 		
+		$this->lang->load('modal_cart', $this->session['language']);
+		$data["clabal_cart"] = $this->lang->line("clabal_cart");
+		$data["clabal_shipment"] = $this->lang->line("clabal_shipment");
+		$data["clabal_shiperror"] = $this->lang->line("clabal_shiperror");
+		$data["clabal_payerror"] = $this->lang->line("clabal_payerror");
+		$data["clabal_shipment_head"] = $this->lang->line("clabal_shipment_head");
+		$data["clabal_payment_head"] = $this->lang->line("clabal_payment_head");
+		
+		
 		if(!empty($this->session['user']) && empty($this->session['ship'])){
 	       $user = $this->db->where('id', $this->session['user'])
 	               ->get('kt_customer')->row();
