@@ -198,7 +198,7 @@ class Main_Controller extends MY_Controller
 		$data["plabel_subtotal"] = $this->lang->line("plabel_subtotal");
 		$data["plabel_shipprice"] = $this->lang->line("plabel_shipprice");
 		$data["plabel_grandtotal"] = $this->lang->line("plabel_grandtotal");
-		
+		$data["plabel_image"] = $this->lang->line("plabel_image");
 		
         $this->lang->load('modal_user', $this->session['language']);
 		$data["label_salutation"] = $this->lang->line("label_salutation");
@@ -226,7 +226,11 @@ class Main_Controller extends MY_Controller
 		$data["clabal_payerror"] = $this->lang->line("clabal_payerror");
 		$data["clabal_shipment_head"] = $this->lang->line("clabal_shipment_head");
 		$data["clabal_payment_head"] = $this->lang->line("clabal_payment_head");
-		
+		$data["clabal_order"] = $this->lang->line("clabal_order");
+		$data["clabal_close"] = $this->lang->line("clabal_close");
+		$data["clabal_step1"] = $this->lang->line("clabal_step1");
+		$data["clabal_step2"] = $this->lang->line("clabal_step2");
+		$data["clabal_thank"] = $this->lang->line("clabal_thank");
 		
 		if(!empty($this->session['user']) && empty($this->session['ship'])){
 	       $user = $this->db->where('id', $this->session['user'])

@@ -10,3 +10,4 @@ $lang['plabel_total'] = 'Total';
 $lang['plabel_subtotal'] = 'Subtotal';
 $lang['plabel_shipprice'] = 'Ship Price';
 $lang['plabel_grandtotal'] = 'Grand Total';
+$lang['plabel_image'] = 'Image';

@@ -14,6 +14,7 @@
                     <thead>
                             <tr>
                             	<th align="center"><input type="checkbox" class="deleteAllCart" /></th>
+                            	<th class="hidden-xs"><?php echo $plabel_image; ?></th>
                                 <th class="hidden-xs"><?php echo $plabel_barcode; ?></th>
                                 <th><?php echo $plabel_product; ?></th>
                                 <th><?php echo $plabel_price; ?></th>
@@ -23,7 +24,9 @@
                     </thead>
                     <tbody class="cartdetail_tr">
                             <tr class="footer_grid">
-                                <td colspan="4" align="right"><?php echo $plabel_subtotal; ?></td>
+                            	<td></td>
+                            	<td colspan="2" class="hidden-xs"></td>
+                                <td colspan="2" align="right"><?php echo $plabel_subtotal; ?></td>
                                 <td colspan="2" align="right">
                                 	<input type="hidden" id="cart_subtotal" name="subtotal" />
                                 	<input type="hidden" id="cart_subweight" name="subweight" />
@@ -31,11 +34,15 @@
                             	</td>
                             </tr>
                             <tr class="footer_grid cartdetail_shipprice">
-                                <td colspan="4" class="text-right"><?php echo $plabel_shipprice; ?></td>
+                            	<td></td>
+                            	<td colspan="2" class="hidden-xs"></td>
+                                <td colspan="2" class="text-right"><?php echo $plabel_shipprice; ?></td>
                                 <td colspan="2" class="text-right"><input type="hidden" id="cart_shipprice" name="shipprice" /><span class="text_shipprice"></span></td>
                             </tr>
                             <tr class="footer_grid cartdetail_grandtotal">
-                                <td colspan="4" class="text-right"><?php echo $plabel_grandtotal; ?></td>
+                            	<td></td>
+                            	<td colspan="2" class="hidden-xs"></td>
+                                <td colspan="2" class="text-right"><?php echo $plabel_grandtotal; ?></td>
                                 <td colspan="2" class="text-right"><input type="hidden" id="cart_grandtotal" name="grandtotal" /><span class="text_grandtotal"></span></td>
                             </tr>
                     </tbody>
@@ -169,15 +176,31 @@
 		            </div>
 		        </form>
 			</div>
+			
+			<div class="col-lg-12" id="stage_three" style="display: none;">
+				<div class="panel panel-success">
+				  <div class="panel-heading">
+				    <h3 class="panel-title"><?php echo $clabal_shipment; ?></h3>
+				  </div>
+				  <div class="panel-body">
+				  	<p> 
+					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation">aaa</span>
+					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
+					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
+					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
+					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
+				    </p>
+				  </div>
+				</div>
+			</div>
 		</div>
       </div>
       <div class="modal-footer">
-	        <input type="reset" id="closeBtn" data-dismiss="modal" class="btn btn-default" value="Close" />
-	        <a href="#" id="goStage1" class="btn btn-default hide"><i class="fa fa-arrow-left"></i> Stage 1</a>
-	        <a href="#" id="goStage2" class="btn btn-default hide"><i class="fa fa-arrow-left"></i> Stage 2</a>
-	        <input type="submit" id="btnSave" class="btn btn-primary hide" value="Save Unit" />
-	        <input type="button" id="stage2Btn" class="btn btn-success" value="Go to stage 2 "/>
-	        <input type="button" id="stage3Btn" class="btn btn-success hide" value="Go to stage 3"/>
+	        <input type="reset" id="closeBtn" data-dismiss="modal" class="btn btn-default" value="<?php echo $clabal_close; ?>" />
+	        <a href="#" id="goStage1" class="btn btn-default hide"><i class="fa fa-arrow-left"></i> <?php echo $clabal_step1; ?></a>
+	        <a href="#" id="goStage2" class="btn btn-default hide"><i class="fa fa-arrow-left"></i> <?php echo $clabal_step2; ?></a>
+	        <a href="#"  id="stage2Btn" class="btn btn-success"><?php echo $clabal_step2; ?> <i class="fa fa-arrow-right"></i></a>
+	        <input type="submit" id="btnSave" class="btn btn-success hide" value="<?php echo $clabal_order; ?>"/>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -187,6 +210,7 @@
 function queryProduct(){
     var thisClass = this;
     var urlini = 'processajax/';
+    var formId = $("#shipModalForm");
     thisClass.limitPage = 5;
     
     this.buildMenuStep3Click = function(){
@@ -282,7 +306,7 @@ function queryProduct(){
 	            		
 	            		html += '<div class="col-sm-6 col-md-4">';
 	            		html += '<div class="thumbnail">';
-	            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
+	            		html += '<img alt="'+productName+'" data-toggle="modal" data-target="#imageProductModal" class="imageProductQuery" date-image="'+image+'" data-id="'+val.pid+'" style="width: 300px; height: 200px;" src="<?php echo base_url('pimage/') ?>'+image+'">';
 	            		html += '<div class="caption">';
 	            		html += '<p class="text-muted"><?php echo $plabel_barcode; ?> : <span class="product_barcode" data-id="'+val.pid+'">'+val.barcode+'</span></p>';
 	            		html += '<b><span class="product_name" data-id="'+val.pid+'">'+productName+'</span></b>';
@@ -355,7 +379,6 @@ function queryProduct(){
     }
     
     this.buildSelectCartQty = function(qty, pid, stock){
-        //var len = 99;
         var len = stock;
         var option = '';
         option += "<select class='productCart_qty' data-id='"+pid+"'>";
@@ -374,8 +397,7 @@ function queryProduct(){
     }
     
     this.buildSelectQty = function(qty, pid){
-        var len = 99;
-        //var len = qty;
+        var len = qty;
         var option = '';
         option += "<select class='product_qty' data-id='"+pid+"'>";
         if(len > 0){
@@ -402,6 +424,7 @@ function queryProduct(){
                 obj.push({id : val.id, qty : val.qty});
                 tr +=  "<tr class='detail_grid'>";
                 tr += "<td class='text-center'><a href='#del' class='product_remove' data-id='"+val.id+"'><i class='fa fa-times'></i></a></td>";
+                tr += "<td class='hidden-xs'><img style='width: 60px; height: 40px;' src='"+val.image+"'/></td>";
                 tr += "<td class='hidden-xs'>"+val.barcode+"</td>";
                 tr += "<td>"+val.name+"</td>";
                 tr += "<td class='text-center'>"+val.price+"</td>";
@@ -521,7 +544,7 @@ function queryProduct(){
         var htmlTrPay = '';
         var htmlRadioPay = '';
         var grandtotal=0;
-        var obj;
+        var obj,objShipType,objPayment;
     	$.getJSON(
                     url,
                     {
@@ -535,12 +558,15 @@ function queryProduct(){
                         
                      	if(result !== null && result !==''){
                      		obj = [];
+                     		objShipType = [];
+                     		objPayment = [];
 			        		htmlTrShip += "<tr><th><h4 class='shipLabel'><?php echo $clabal_shipment_head; ?></h4></th></tr>";
 			        		$.each(result.shipprice, function(ini, val){
 								if(obj.indexOf(val.id) == -1){
 				                    htmlTrShip += "<tr><td class='cartShipLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
 				                    obj.push(val.id);    
 				                }
+				                objShipType.push(parseInt(val.shiptype_id));
 			        		});
 			        		$(".cartShipment").html(htmlTrShip);
 			        		$.each(result.shipprice, function(ini, val){
@@ -562,6 +588,7 @@ function queryProduct(){
 				                    htmlTrPay += "<tr><td class='cartPayLabel' data-num='"+val.id+"'><h4>"+val.name+"</h4></td></tr>";
 				                    obj.push(val.id);    
 				                }
+				                objPayment.push(parseInt(val.id));
 			        		});
 			        		$(".cartPayment").html(htmlTrPay);
 			        		$.each(result.payment, function(ini, val){
@@ -590,6 +617,18 @@ function queryProduct(){
 					        	$(".cartdetail_shipprice").hide();
 					        	$(".cartdetail_grandtotal").hide();
 					        }		        		
+					        
+					        if(thisClass.shiptype != undefined && thisClass.paytype != undefined){
+						        if(objShipType.indexOf(thisClass.shiptype) == -1 && objPayment.indexOf(thisClass.paytype) !== -1){
+									$("<label class='error'><?php echo $clabal_shiperror; ?></label>").insertAfter('.shipLabel');
+	        			       	}else if(objShipType.indexOf(thisClass.shiptype) !== -1 && objPayment.indexOf(thisClass.paytype) == -1){
+		       						$("<label class='error'><?php echo $clabal_payerror; ?></label>").insertAfter('.payLabel');
+	        			       	}else if(objShipType.indexOf(thisClass.shiptype) == -1 && objPayment.indexOf(thisClass.paytype) == -1){
+		       						$("<label class='error'><?php echo $clabal_payerror; ?></label>").insertAfter('.payLabel');
+									$("<label class='error'><?php echo $clabal_shiperror; ?></label>").insertAfter('.shipLabel');
+	        			       	}
+        			       	}
+        			       	
 			        	}else{
 			        		$(".cartShipment").html('');
 			        		$(".cartPayment").html('');
@@ -616,6 +655,61 @@ function queryProduct(){
 				        	thisClass.buildCartDetailGrid();
 				        });
 		});
+    }
+    
+    this.validateRatePrice = function(subtotal, weight){
+        var url = urlini+ 'getRatePrice';
+        var objShipType,objPayment;
+    	$.getJSON(
+                    url,
+                    {
+                        subtotal : subtotal,
+                        city : $("#ship_city").val(),
+                        state : $("#ship_state").val(),
+                        country : $("#ship_country").val(),
+                        weight : weight
+                    },
+                    function(result){
+                        
+                     	if(result !== null && result !==''){
+                     		thisClass.shipAddressSession();
+                     		objShipType = [];
+                     		objPayment = [];
+			        		$.each(result.shipprice, function(ini, val){
+			        			objShipType.push(parseInt(val.shiptype_id));
+			        		});
+			        		
+			        		$.each(result.payment, function(ini, val){
+			        			objPayment.push(parseInt(val.id));
+			        		});	
+			        		
+        			       	if(objShipType.indexOf(thisClass.shiptype) !== -1 && objPayment.indexOf(thisClass.paytype) !== -1){
+			       					$('#cartModal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_thank; ?>');
+			
+									$('#closeBtn').show();
+									$('#stage_two').hide();
+									$("#stage_three").show();
+									$('#btnSave').addClass('hide');
+									$('#goStage1').addClass('hide');
+									
+									thisClass.saveOrder();
+        			       	}else if(objShipType.indexOf(thisClass.shiptype) == -1 && objPayment.indexOf(thisClass.paytype) !== -1){
+        			       		thisClass.backToCart();
+        			       		thisClass.buildCartDetailGrid();
+        			       	}else if(objShipType.indexOf(thisClass.shiptype) !== -1 && objPayment.indexOf(thisClass.paytype) == -1){
+        			       		thisClass.backToCart();
+        			       		thisClass.buildCartDetailGrid();
+        			       	}else if(objShipType.indexOf(thisClass.shiptype) == -1 && objPayment.indexOf(thisClass.paytype) == -1){
+        			       		thisClass.backToCart();
+        			       		thisClass.buildCartDetailGrid();
+        			       	}
+			        	}
+
+		});
+    }
+    
+    this.saveOrder = function(){
+    	
     }
     
     this.getAutoCity = function(add){
@@ -734,12 +828,15 @@ function queryProduct(){
 		$('.product_buy').click(function(){
 			var id = $(this).attr('data-id');
 			var barcode = $(".product_barcode[data-id='"+id+"']").text();
-			var qty = $(".product_qty[data-id='"+id+"']").val();
+			//var qty = $(".product_qty[data-id='"+id+"']").val();
 			var name = $(".product_name[data-id='"+id+"']").text();
 			var price = parseInt($(".product_price[data-id='"+id+"']").text());
+			var image = $(".imageProductQuery[data-id='"+id+"']").attr('src');
 			//var stock = $(".product_stock[data-id='"+id+"']").val();
-			var stock = 99;
 			var weight = $(".product_weight[data-id='"+id+"']").val();
+			
+			var stock = 99;
+			var qty = 1;
 			if(qty !== null){
 				var obj= { 
 		        		 	id : id,
@@ -747,6 +844,7 @@ function queryProduct(){
 							 name : name,
 							 price : price,
 							 qty : qty,
+							 image : image,
 							 total : price * qty,
 							 stock : stock,
 							 weight : weight
@@ -826,6 +924,67 @@ function queryProduct(){
 
         return odata;
     }
+    
+    this.initValidateForm = function(){
+		  formId.validate({
+		    rules: {
+		      firstname:{
+		      	required: true
+		      },
+              fax:{
+		      	required: false,
+		      	number: true,
+		      	rangelength: [4, 20]
+		      },
+                      zipcode:{
+                        required: false,
+		      	number: true
+                      },
+                      telephone:{
+		      	required: false,
+		      	number: true,
+		      	rangelength: [4, 20]
+		      },
+		      mobile:{
+		      	required: true,
+		      	number: true,
+		      	rangelength: [4, 20]
+		      },
+		      email: {
+		        required: true,
+		        email: true
+		      }
+		    },
+			 invalidHandler: function(event, validator) {
+			// 'this' refers to the form
+				thisClass.submitForm = false;
+			}
+		  });
+    }
+
+    this.resetValidatForm = function(){
+            var validator = formId.validate();
+            validator.resetForm();
+            $(".error").removeClass('error');
+    }
+
+    this.initValidateFormEvent = function(){
+            thisClass.submitForm = true;
+            formId.validate().form();
+    }
+    
+    this.backToCart = function(){
+		$('#cartModal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_cart; ?>');
+		$('#stage2Btn').show();
+		$('#closeBtn').show();
+		$('#stage3Btn').addClass('hide');
+		$('#stage_two').hide();
+		$('#stage_one').show();
+		$("#stage_three").hide();
+		
+		$('#goStage1').addClass('hide');
+		$('#btnSave').addClass('hide');
+    }
 	
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
@@ -896,6 +1055,10 @@ function queryProduct(){
 		  $(".deleteAllCart").prop('checked',false);
 		});
 		
+        $('#cartModal').on('hidden.bs.modal', function (e) {
+			thisClass.backToCart();
+		});
+		
 		$('#stage2Btn').click(function () {
 			if(thisClass.shiptype != undefined && thisClass.paytype != undefined){
 				$('#cartModal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_shipment; ?>');
@@ -907,7 +1070,7 @@ function queryProduct(){
 				
 				$(this).hide();
 				
-				$('#stage3Btn').removeClass('hide');
+				$('#btnSave').removeClass('hide');
 				$('#goStage1').removeClass('hide');
 			}else if(thisClass.shiptype != undefined && thisClass.paytype == undefined){
 				$(".error").remove();
@@ -923,26 +1086,21 @@ function queryProduct(){
 			
 		});
 		
-		$('#stage3Btn').click(function() {
-			$('#cartModal .modal-title').text('New Unit - Stage 3 - Activity Creation');
+		$('#btnSave').click(function() {
 			
-			$('#closeBtn').hide();
-			$('#stage_two').hide();
-			$('#stage_three').show();
-			$(this).hide();
-			
-			$('#goStage2').removeClass('hide').show();
-			$('#goStage1').addClass('hide');
-			$('#stage3Btn').addClass('hide');
-			
-			thisClass.shipAddressSession();
+            thisClass.initValidateFormEvent();
+            if(thisClass.submitForm){
+            	thisClass.validateRatePrice($("#cart_subtotal").val(), $("#cart_subweight").val());
+                //thisClass.saveData();
+            }
+            return false;
 		});
 		
 		$('#goStage1').click(function () {
-			$('#new_unit_modal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_cart; ?>');
+			$('#cartModal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_cart; ?>');
 			$('#stage2Btn').show();
 			$('#closeBtn').show();
-			$('#stage3Btn').addClass('hide');
+			$('#btnSave').addClass('hide');
 			$('#stage_two').hide();
 			$('#stage_one').show();
 			
@@ -951,7 +1109,7 @@ function queryProduct(){
 		});
 		
 		$('#goStage2').click(function () {
-			$('#new_unit_modal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_shipment; ?>');
+			$('#cartModal .modal-title').html('<i class="fa fa-shopping-cart hidden-xs fa-2x"></i> <?php echo $clabal_shipment; ?>');
 			
 			$('#closeBtn').hide();
 			
@@ -960,16 +1118,14 @@ function queryProduct(){
 			
 			$(this).hide();
 			
-			$('#stage3Btn').removeClass('hide');
-			$('#stage3Btn').show();
 			$('#goStage1').removeClass('hide');
 			
 		});
 		
         $( "#ship_city" ).autocomplete({
 			source: function(req, add){
-			thisClass.getAutoCity(add);
-                }
+				thisClass.getAutoCity(add);
+            }
         });
 
         $( "#ship_state" ).autocomplete({
@@ -985,7 +1141,7 @@ function queryProduct(){
         });
 		
 		thisClass.getSessionCart();
-       
+       	thisClass.initValidateForm();
     }
 
 

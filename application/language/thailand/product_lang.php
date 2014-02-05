@@ -10,3 +10,4 @@ $lang['plabel_total'] = 'รวม';
 $lang['plabel_subtotal'] = 'รวม';
 $lang['plabel_shipprice'] = 'ค่าส่ง';
 $lang['plabel_grandtotal'] = 'รวมทั้งหมด';
+$lang['plabel_image'] = 'ภาพสินค้า';
