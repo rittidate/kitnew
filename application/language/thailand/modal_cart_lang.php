@@ -11,3 +11,4 @@ $lang['clabal_close'] = "ปิด";
 $lang['clabal_step1'] = "ขั้นตอนที่ 1";
 $lang['clabal_step2'] = "ขั้นตอนที่ 2";
 $lang['clabal_thank'] = "ขอบคุณที่ใช้บริการ";
+$lang['clabal_cartdetail'] = "รายละเอียดการสั่งซื้อ";

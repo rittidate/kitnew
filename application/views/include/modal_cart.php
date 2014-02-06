@@ -58,6 +58,13 @@
 			<div class="col-lg-12" id="stage_two" style="display: none;">
 				<form class="form-horizontal" id="shipModalForm" role="form">
 		            <div class="form-group">
+		                <label for="email" class="col-sm-3 control-label text-right"><?php echo $label_email; ?></label>
+		                <div class="col-sm-8">
+		                    <input type="text" name="email" class="form-control col-md-8" id="ship_email" placeholder="<?php echo $label_email; ?>" value="<?php echo $email; ?>">
+		                </div>
+		            </div>
+		            
+		            <div class="form-group">
 		                <label for="firstname" class="col-sm-3 control-label text-right"><?php echo $label_salutation; ?></label>
 		                <div class="col-sm-8">
 		                    <?php echo $salutation; ?>
@@ -184,12 +191,92 @@
 				  </div>
 				  <div class="panel-body">
 				  	<p> 
-					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation">aaa</span>
-					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
-					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
-					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
-					    <b><?php echo $label_salutation; ?></b> <span class="finish_salutation"></span>
+				 		<b><?php echo $label_email; ?></b> <span class="ftxt_email"></span>
+					</p>
+				  	<p> 
+				 		<b class="ftxt_salutation"></b> <span class="ftxt_firstname"></span> <b><?php echo $label_lastname; ?></b> <span class="ftxt_lastname"></span>
+					</p>
+					<p>
+						<b><?php echo $label_address1; ?></b> <span class="ftxt_address1"></span> 
 				    </p>
+				    <p>
+					    <b><?php echo $label_address2; ?></b> <span class="ftxt_address2"></span>
+					    <b><?php echo $label_address3; ?></b> <span class="ftxt_address3"></span>
+					    <b><?php echo $label_address4; ?></b> <span class="ftxt_address4"></span>
+				    </p>
+				    <p>
+				    	<b><?php echo $label_city; ?></b> <span class="ftxt_city"></span>
+				    	<b><?php echo $label_state; ?></b> <span class="ftxt_state"></span>
+				    	<b><?php echo $label_zipcode; ?></b> <span class="ftxt_zipcode"></span>
+				    	<b><?php echo $label_country; ?></b> <span class="ftxt_country"></span>
+				    </p>
+				    <p>
+				    	<b><?php echo $label_mobile; ?></b> <span class="ftxt_mobile"></span>
+				    	<b><?php echo $label_telephone; ?></b> <span class="ftxt_telephone"></span>
+				    	<b><?php echo $label_fax; ?></b> <span class="ftxt_fax"></span>
+				    	<b><?php echo $label_ext; ?></b> <span class="ftxt_fax_ext"></span>
+				    </p>
+				  </div>
+				</div>
+				
+				<div class="panel panel-success">
+				  <div class="panel-heading">
+				    <h3 class="panel-title"><?php echo $clabal_shipment_head; ?></h3>
+				  </div>
+				  <div class="panel-body">
+				  		<span class="success_shipment"></span>
+				  </div>
+				</div>
+				
+				<div class="panel panel-success">
+				  <div class="panel-heading">
+				    <h3 class="panel-title"><?php echo $clabal_payment_head; ?></h3>
+				  </div>
+				  <div class="panel-body">
+				  		<span class="success_payment"></span>
+				  </div>
+				</div>
+				
+				<div class="panel panel-success">
+				  <div class="panel-heading">
+				    <h3 class="panel-title"><?php echo $clabal_cartdetail; ?></h3>
+				  </div>
+				  <div class="panel-body">
+				  		<table id="success-cartdetail" class="table table-responsive">
+		                    <thead>
+		                            <tr>
+		                            	<th align="center"></th>
+		                            	<th class="hidden-xs"><?php echo $plabel_image; ?></th>
+		                                <th class="hidden-xs"><?php echo $plabel_barcode; ?></th>
+		                                <th><?php echo $plabel_product; ?></th>
+		                                <th><?php echo $plabel_price; ?></th>
+		                                <th style="width:20px;"><?php echo $plabel_qty; ?></th>
+		                                <th class="text-right"><?php echo $plabel_total; ?></th>
+		                            </tr>
+		                    </thead>
+		                    <tbody class="cartdetail_success">
+		                            <tr class="footer_success">
+		                            	<td></td>
+		                            	<td colspan="2" class="hidden-xs"></td>
+		                                <td colspan="2" align="right"><?php echo $plabel_subtotal; ?></td>
+		                                <td colspan="2" align="right">
+		                                	<span class="success_subtotal"></span>
+		                            	</td>
+		                            </tr>
+		                            <tr class="footer_success">
+		                            	<td></td>
+		                            	<td colspan="2" class="hidden-xs"></td>
+		                                <td colspan="2" class="text-right"><?php echo $plabel_shipprice; ?></td>
+		                                <td colspan="2" class="text-right"><span class="success_shipprice"></span></td>
+		                            </tr>
+		                            <tr class="footer_success">
+		                            	<td></td>
+		                            	<td colspan="2" class="hidden-xs"></td>
+		                                <td colspan="2" class="text-right"><?php echo $plabel_grandtotal; ?></td>
+		                                <td colspan="2" class="text-right"><span class="success_grandtotal"></span></td>
+		                            </tr>
+		                    </tbody>
+		                </table>
 				  </div>
 				</div>
 			</div>
@@ -490,6 +577,38 @@ function queryProduct(){
 
     }
     
+	this.buildCartDetailSuccess = function(){
+        $(".detail_grid_success").remove();
+        var tr = '';
+        var i = 0;
+        var subtotal = 0;
+        var weightTotal = 0;
+        var obj = [];
+        if(thisClass.objProductCart != null){
+            $.each(thisClass.objProductCart, function(ini, val){
+                subtotal += val.price * val.qty;
+                weightTotal += val.weight * val.qty;
+                obj.push({id : val.id, qty : val.qty});
+                tr +=  "<tr class='detail_grid_success'>";
+                tr += "<td class='text-center'></td>";
+                tr += "<td class='hidden-xs'><img style='width: 60px; height: 40px;' src='"+val.image+"'/></td>";
+                tr += "<td class='hidden-xs'>"+val.barcode+"</td>";
+                tr += "<td>"+val.name+"</td>";
+                tr += "<td class='text-center'>"+val.price+"</td>";
+                tr += "<td class='text-center'>"+val.qty+"</td>";
+                tr += "<td class='text-right'>"+val.total+"</td>";
+                tr += "</tr>";
+            });
+        }
+        
+        $(tr).insertBefore(".footer_success:first-child");
+
+        $(".success_subtotal").text(subtotal);
+        $(".success_shipprice").text($("#cart_shipprice").val());
+        $(".success_grandtotal").text($("#cart_grandtotal").val());
+
+    }
+    
     this.saveSessionCart = function(obj){
     	var url = urlini+ 'saveSessionCart';
     	var o_data = { json: JSON.stringify(obj) }
@@ -593,7 +712,7 @@ function queryProduct(){
 			        		$(".cartPayment").html(htmlTrPay);
 			        		$.each(result.payment, function(ini, val){
 			        			if(thisClass.paytype != undefined && thisClass.paytype == val.id){
-									htmlRadioPay = '<div class="radio"><label><input type="radio" name="optionsPayment" id="optionsPayment'+val.id+'" data-pay="'+val.id+'" value="'+val.id+'" checked>';
+									htmlRadioPay = '<div class="radio"><label><input type="radio" name="optionsPayment" class="optionsPayment" id="optionsPayment'+val.id+'" data-pay="'+val.id+'" value="'+val.id+'" checked>';
 						    	}else{
 						    		htmlRadioPay = '<div class="radio"><label><input type="radio" name="optionsPayment" class="optionsPayment" id="optionsPayment'+val.id+'" data-pay="'+val.id+'" value="'+val.id+'">';
 						    	}
@@ -709,7 +828,44 @@ function queryProduct(){
     }
     
     this.saveOrder = function(){
-    	
+		var odata = { 
+						subtotal : $("#cart_subtotal").val(),
+		                shipprice : $("#cart_shipprice").val(),
+		                grandtotal : $("#cart_grandtotal").val(),
+		                shipment_id : thisClass.shiptype,
+		                payment_id : thisClass.paytype,
+		                json: JSON.stringify(thisClass.objProductCart)
+		            };
+    	var url = urlini+ 'saveOrder';
+    	odata = thisClass.oData(odata);
+    	$.getJSON(
+            url, odata,
+            function(result){
+            	$(".ftxt_email").text($("#ship_email").val());
+              	$(".ftxt_salutation").text($("#ship_salutation option:selected").text());
+		    	$(".ftxt_firstname").text($("#ship_firstname").val());
+		    	$(".ftxt_lastname").text($("#ship_lastname").val());
+		    	
+		    	$(".ftxt_address1").text($("#ship_address1").val());
+		    	$(".ftxt_address2").text($("#ship_address2").val());
+		    	$(".ftxt_address3").text($("#ship_address3").val());
+		    	$(".ftxt_address4").text($("#ship_address4").val());
+		        
+		        $(".ftxt_city").text($("#ship_city").val());
+		        $(".ftxt_state").text($("#ship_state").val());
+		        $(".ftxt_zipcode").text($("#ship_zipcode").val());
+		        $(".ftxt_country").text($("#ship_country option:selected").text());
+		        
+		        $(".ftxt_mobile").text($("#ship_mobile").val());
+		        $(".ftxt_telephone").text($("#ship_telephone").val());
+		        $(".ftxt_fax").text($("#ship_fax").val());
+		        $(".ftxt_fax_ext").text($("#ship_fax_ext").val());
+		        
+		        $(".success_shipment").text($(".optionsShipment:checked").parent('label').text());
+		        $(".success_payment").text($(".optionsPayment:checked").parent('label').text());
+		        
+		        thisClass.buildCartDetailSuccess();
+		});
     }
     
     this.getAutoCity = function(add){

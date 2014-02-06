@@ -11,4 +11,4 @@ $lang['clabal_close'] = "Close";
 $lang['clabal_step1'] = "Step 1";
 $lang['clabal_step2'] = "Step 2";
 $lang['clabal_thank'] = "Thank you";
-
+$lang['clabal_cartdetail'] = "Order Detail";

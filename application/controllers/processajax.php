@@ -440,7 +440,6 @@ class Processajax extends Main_Controller {
          }
      }
 
-    
     public function shipAddressSession(){
         $firstname = $_REQUEST['firstname'];
         $lastname = $_REQUEST['lastname'];
@@ -460,6 +459,7 @@ class Processajax extends Main_Controller {
         $telephone_ext = $_REQUEST['telephone_ext'];
         $fax = $_REQUEST['fax'];
         $fax_ext = $_REQUEST['fax_ext'];
+        $email = $_REQUEST['email'];
 		
         $this->session['ship'] = array(
             'firstname' => $firstname,
@@ -479,7 +479,8 @@ class Processajax extends Main_Controller {
             'telephone' => $telephone,
             'telephone_ext' => $telephone_ext,
             'fax' => $fax,
-            'fax_ext' => $fax_ext
+            'fax_ext' => $fax_ext,
+            'email' => $email
         );
        $update = array(
             'ocid' => $this->viewerId,
@@ -490,6 +491,10 @@ class Processajax extends Main_Controller {
 	   echo json_encode('success');
     	
     }
-    
 
+	public function saveOrder(){
+		echo json_encode('');
+		
+	}
+    
 }

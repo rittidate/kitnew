@@ -218,6 +218,7 @@ class Main_Controller extends MY_Controller
 		$data["label_telephone"] = $this->lang->line("label_telephone");
 		$data["label_ext"] = $this->lang->line("label_ext");
 		$data["label_fax"] = $this->lang->line("label_fax");
+		$data["label_email"] = $this->lang->line("label_email");
 		
 		$this->lang->load('modal_cart', $this->session['language']);
 		$data["clabal_cart"] = $this->lang->line("clabal_cart");
@@ -231,6 +232,7 @@ class Main_Controller extends MY_Controller
 		$data["clabal_step1"] = $this->lang->line("clabal_step1");
 		$data["clabal_step2"] = $this->lang->line("clabal_step2");
 		$data["clabal_thank"] = $this->lang->line("clabal_thank");
+		$data["clabal_cartdetail"] = $this->lang->line("clabal_cartdetail");
 		
 		if(!empty($this->session['user']) && empty($this->session['ship'])){
 	       $user = $this->db->where('id', $this->session['user'])
@@ -255,6 +257,7 @@ class Main_Controller extends MY_Controller
 	       $data["telephone_ext"] = $user->telephone_ext;
 	       $data["fax"] = $user->fax;
 	       $data["fax_ext"] = $user->fax_ext;
+		   $data["email"] = $user->email;
         }else if(!empty($this->session['ship'])){
 	       //$data["id"] = $user->id;
 	       $data["firstname"] = $this->session['ship']['firstname'];
@@ -275,6 +278,7 @@ class Main_Controller extends MY_Controller
 	       $data["telephone_ext"] = $this->session['ship']['telephone_ext'];
 	       $data["fax"] = $this->session['ship']['fax'];
 	       $data["fax_ext"] = $this->session['ship']['fax_ext'];
+	       $data["email"] = $this->session['ship']['email'];
 		}else{
        	   $data["id"] = '';
 	       $data["firstname"] = '';
@@ -295,6 +299,7 @@ class Main_Controller extends MY_Controller
 	       $data["telephone_ext"] = '';
 	       $data["fax"] = '';
 	       $data["fax_ext"] = '';
+		   $data["email"] = '';
        }
 		$this->load->view('include/modal_cart', $data);
 	}
