@@ -493,7 +493,82 @@ class Processajax extends Main_Controller {
     }
 
 	public function saveOrder(){
-		echo json_encode('');
+        $firstname = $_REQUEST['firstname'];
+        $lastname = $_REQUEST['lastname'];
+        //$birth = $_REQUEST['birth'];
+        $address1 = $_REQUEST['address1'];
+        $address2 = $_REQUEST['address2'];
+        $address3 = $_REQUEST['address3'];
+        $address4 = $_REQUEST['address4'];
+        $city = $_REQUEST['city'];
+        $state = $_REQUEST['state'];
+        $country = $_REQUEST['country'];
+        //$salutation = $_REQUEST['salutation'];
+        //$gender = $_REQUEST['gender'];
+        $zipcode = $_REQUEST['zipcode'];
+        $mobile = $_REQUEST['mobile'];
+        $telephone = $_REQUEST['telephone'];
+        $telephone_ext = $_REQUEST['telephone_ext'];
+        $fax = $_REQUEST['fax'];
+        $fax_ext = $_REQUEST['fax_ext'];
+        $email = $_REQUEST['email'];
+		
+		$payment_id = $_REQUEST['payment_id'];
+		$shipment_id = $_REQUEST['shipment_id'];
+		
+		$subtotal = $_REQUEST['subtotal'];
+		$shipprice = $_REQUEST['shipprice'];
+		$grandtotal = $_REQUEST['grandtotal'];
+		
+		$json = json_decode($_REQUEST['json']);
+		
+		$cid = !empty($this->session['user']) ? $this->session['user'] : 0;
+		
+      	$insert_order = array(
+      		'order_date' => date('Y-m-d H:i:s'),
+      		'subtotal' => $subtotal,
+      		'shipprice' => $shipprice,
+      		'grandtotal' => $grandtotal,
+      		'customer_id' => $cid,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            //'birth' => $birth,
+            'address1' => $address1,
+            'address2' => $address2,
+            'address3' => $address3,
+            'address4' => $address4,
+            'city' => $city,
+            'state' => $state,
+            'country' => $country,
+            //'salutation' => $salutation,
+            //'gender' => $gender,
+            'zipcode' => $zipcode,
+            'mobile' => $mobile,
+            'telephone' => $telephone,
+            'telephone_ext' => $telephone_ext,
+            'fax' => $fax,
+            'fax_ext' => $fax_ext,
+            'email' => $email,
+            'shipment_id' => $shipment_id,
+            'payment_id' => $payment_id,
+            'order_status' => 10,
+            'is_active' => 'Y',
+            'is_delete' => 'N',
+            'create_date' => date('Y-m-d H:i:s'),
+            'create_by_id' => $cid
+       	);
+       	//$this->db->insert('kt_order', $insert_order);
+		//$order_id = $this->db->insert_id();
+		foreach($json as $value){
+			$insert_orderDetail = array(
+				'order_id' => $order_id,
+				'pid' => $value->id
+			);
+			$this->db->insert('kt_orderdetail', $insert_orderDetail);
+		}
+		
+		$response->order[0]['id'] = $order_id;
+		echo json_encode($response);
 		
 	}
     
