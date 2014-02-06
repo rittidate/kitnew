@@ -239,7 +239,7 @@
 				
 				<div class="panel panel-success">
 				  <div class="panel-heading">
-				    <h3 class="panel-title"><?php echo $clabal_cartdetail; ?></h3>
+				    <h3 class="panel-title"><?php echo $clabal_cartdetail; ?> <?php echo $clabal_order_number; ?> <span class="order_number"></span></h3>
 				  </div>
 				  <div class="panel-body">
 				  		<table id="success-cartdetail" class="table table-responsive">
@@ -864,7 +864,10 @@ function queryProduct(){
 		        $(".success_shipment").text($(".optionsShipment:checked").parent('label').text());
 		        $(".success_payment").text($(".optionsPayment:checked").parent('label').text());
 		        
+		        $(".order_number").text(result.order[0].id);
 		        thisClass.buildCartDetailSuccess();
+		        thisClass.objProductCart = [];
+		        thisClass.buildCartDetailGrid();
 		});
     }
     

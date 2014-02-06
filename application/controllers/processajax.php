@@ -557,19 +557,43 @@ class Processajax extends Main_Controller {
             'create_date' => date('Y-m-d H:i:s'),
             'create_by_id' => $cid
        	);
-       	//$this->db->insert('kt_order', $insert_order);
-		//$order_id = $this->db->insert_id();
+       	$this->db->insert('kt_order', $insert_order);
+		$order_id = $this->db->insert_id();
 		foreach($json as $value){
+			$product = $this->db->where('id', $value->id)->get('kt_product')->row();
+			$sumweight = $value->weight * $value->qty;
+			
 			$insert_orderDetail = array(
 				'order_id' => $order_id,
-				'pid' => $value->id
+				'pid' => $value->id,
+				'name_en' => $product->name_en,
+				'name_th' => $product->name_th,
+				'volumn' => $product->volumn,
+				'unit' => $product->unit,
+				'price' => $value->price,
+				'qty' => $value->qty,
+				'sumtotal' => $value->total,
+				'weight' => $value->weight,
+				'sumweight' => $sumweight,
+            	'is_active' => 'Y',
+            	'is_delete' => 'N'
 			);
 			$this->db->insert('kt_orderdetail', $insert_orderDetail);
 		}
+		$this->sendEmailOrder($email, $order_id);
 		
 		$response->order[0]['id'] = $order_id;
 		echo json_encode($response);
 		
+	}
+
+	public function sendEmailOrder($email = '', $orderid = ''){
+		$this->load->library('email');
+		$this->email->from('arraieot@gmail.com');
+		$this->email->to($email);
+		$this->email->subject('Test email');
+		$this->email->message('test message email');
+		$this->email->send();
 	}
     
 }

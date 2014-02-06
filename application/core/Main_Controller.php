@@ -233,6 +233,7 @@ class Main_Controller extends MY_Controller
 		$data["clabal_step2"] = $this->lang->line("clabal_step2");
 		$data["clabal_thank"] = $this->lang->line("clabal_thank");
 		$data["clabal_cartdetail"] = $this->lang->line("clabal_cartdetail");
+		$data["clabal_order_number"] = $this->lang->line("clabal_order_number");
 		
 		if(!empty($this->session['user']) && empty($this->session['ship'])){
 	       $user = $this->db->where('id', $this->session['user'])

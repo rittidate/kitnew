@@ -23,6 +23,7 @@ class Home extends Main_Controller {
 	   $this->load->view('include/modal_confirm');
        $this->load->view('include/footer');
     }
+	
 
 }
 

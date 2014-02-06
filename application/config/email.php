@@ -9,14 +9,14 @@ $config['protocol'] = 'mail';
 /*
  * SMTP server address and port
  */
-$config['smtp_host'] = '';
-$config['smtp_port'] = '';
+$config['smtp_host'] = '127.0.0.1';
+$config['smtp_port'] = '25';
 
 /*
  * SMTP username and password.
  */
-$config['smtp_user'] = '';
-$config['smtp_pass'] = '';
+$config['smtp_user'] = 'smtpuser';
+$config['smtp_pass'] = 'smtppass';
 
 /*
  * Heroku Sendgrid information.
