@@ -9,17 +9,7 @@ class Home extends Main_Controller {
 
    public function index()
     {
-    	//langague 
-        $this->lang->load('product', $this->session['language']);
-
-        $data["plabel_barcode"] = $this->lang->line("plabel_barcode");
-        $data["plabel_price"] = $this->lang->line("plabel_price");
-        $data["plabel_baht"] = $this->lang->line("plabel_baht");
-        $data["plabel_buy"] = $this->lang->line("plabel_buy");
-        $data["plabel_qty"] = $this->lang->line("plabel_qty");
-	
-       $this->load->view('home',$data);
-	   $this->load->view('include/modal_image');
+       $this->load->view('home');
 	   $this->load->view('include/modal_confirm');
        $this->load->view('include/footer');
     }

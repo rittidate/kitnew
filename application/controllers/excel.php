@@ -1,13 +1,18 @@
 <?php if (!defined('BASEPATH')) die();
 class Excel extends Main_Controller {
 
-    function  __construct()
+    public function  __construct()
     {
         parent::__construct();
     }
 
-   public function index()
+    public function index()
     {
+
+    }
+
+	public function pdf($lang, $lang2)
+	{
     	$this->load->library('ex');
 		//activate worksheet number 1
 		//name the worksheet
@@ -27,6 +32,8 @@ class Excel extends Main_Controller {
 									 ->setCategory("Media Plan");
 		
 		$activeSheet->setCellValue('A1' , 'WEBSITE AD AVAILABILITY STATUS');
+		$activeSheet->setCellValue('A2' , $lang);
+		$activeSheet->setCellValue('A3' , $lang2);
 		
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
 		$this->ex->setActiveSheetIndex(0);
@@ -39,9 +46,9 @@ class Excel extends Main_Controller {
 		    $objWriter->save('php://output');
 		}elseif($type=='pdf'){
 		    $activeSheet->setShowGridLines(FALSE);
-		    $activeSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+		    $activeSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
 		    $activeSheet->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-		    $activeSheet->getPageMargins()->setTop(.1);
+		    $activeSheet->getPageMargins()->setTop(.2);
 		    $activeSheet->getPageMargins()->setBottom(.1);
 		    $activeSheet->getPageMargins()->setLeft(0.3);
 		    header('Content-Type: application/pdf');
@@ -63,7 +70,8 @@ class Excel extends Main_Controller {
 		
 		
 		exit;
-    	
-    }
+	}
+
+	
 
 }

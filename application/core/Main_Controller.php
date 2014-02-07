@@ -82,6 +82,7 @@ class Main_Controller extends MY_Controller
         $this->modalHeaderMenu();
         $this->advertiserMain();
         $this->sidebarMenu();
+		$this->modalImage();
     }
 
     private function headerMain()
@@ -155,7 +156,7 @@ class Main_Controller extends MY_Controller
             $data["label_ext"] = $this->lang->line("label_ext");
             $data["label_fax"] = $this->lang->line("label_fax");
             $data["label_submit"] = $this->lang->line("label_submit");
-
+			$data["label_close"] = $this->lang->line("label_close");
 
            $data["id"] = $user->id;
            $data["firstname"] = $user->firstname;
@@ -303,6 +304,11 @@ class Main_Controller extends MY_Controller
 		   $data["email"] = '';
        }
 		$this->load->view('include/modal_cart', $data);
+	}
+
+	private function modalImage()
+	{
+		$this->load->view('include/modal_image');
 	}
 
     public function advertiserMain()

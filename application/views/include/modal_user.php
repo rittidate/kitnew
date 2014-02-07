@@ -135,6 +135,12 @@
                   <button type="submit" id="user_submit" class="btn btn-warning col-md-12 col-xs-12"><?php echo $label_submit; ?></button>
                 </div>
             </div>
+            
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                  <input type="reset" id="closeBtn" data-dismiss="modal" class="btn btn-default col-md-12 col-xs-12" value="<?php echo $label_close; ?>" />
+                </div>
+            </div>
 
         </form>
       </div>
@@ -154,7 +160,7 @@
 <script>
 function modelUser(){
     var thisClass = this;
-    var urlini = 'processajax/';
+    var urlini = '<?php echo base_url() ?>processajax/';
     var formId = $("#userModalForm");
 
     this.saveData = function(){

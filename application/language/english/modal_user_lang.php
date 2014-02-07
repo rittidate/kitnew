@@ -18,4 +18,5 @@ $lang['label_ext'] = "Ext.";
 $lang['label_fax'] = "Fax";
 $lang['label_submit'] = "Submit";
 $lang['label_email'] = "Email";
+$lang['label_close'] = "Close";
 ?>

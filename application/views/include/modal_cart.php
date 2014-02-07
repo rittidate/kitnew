@@ -296,7 +296,7 @@
 <script>
 function queryProduct(){
     var thisClass = this;
-    var urlini = 'processajax/';
+    var urlini = '<?php echo base_url() ?>processajax/';
     var formId = $("#shipModalForm");
     thisClass.limitPage = 5;
     
@@ -313,6 +313,7 @@ function queryProduct(){
         $(".menuStep3").append(html);
         
         thisClass.menuStepEvent();
+        return false;
     }
     
     this.buildMenuStep3Select = function(){
@@ -553,6 +554,7 @@ function queryProduct(){
             thisClass.objProductCart = obj;
             
             thisClass.buildCartDetailGrid();
+            return false;
         });
         
         $(".productCart_qty").change(function(){
@@ -766,6 +768,7 @@ function queryProduct(){
 				        	var shiptype = $(this).data('ship');
 				        	thisClass.shiptype = shiptype;
 				        	thisClass.buildCartDetailGrid();
+				        	return false;
 				        });
 				        
 				        $(".optionsPayment").click(function(){
@@ -944,6 +947,7 @@ function queryProduct(){
             thisClass.menuid = id;
             thisClass.pageSelect = 1;
             thisClass.getProduct(); 
+            return false;
         });
     }
     
@@ -959,6 +963,7 @@ function queryProduct(){
         		thisClass.pageSelect = number;	
         	}
         	thisClass.getProduct();
+        	return false;
         });
     }
     
@@ -968,6 +973,7 @@ function queryProduct(){
 			var alt = $(this).attr('alt');
 			$("#imageModalLabel").text(alt);
 			$(".pimage").attr('src', src);
+			//return false;
 		});
 		
 		$('#imageProductModal').on('shown.bs.modal', function() {
@@ -976,12 +982,23 @@ function queryProduct(){
 		    var initModalPadding = 30;
 		    var iniImageWidth = $('.pimage').outerWidth();
 		    var iniImageHeight = $('.pimage').outerHeight();
-		    if(iniImageHeight > iniImageWidth){
+		    //if(iniImageHeight > iniImageWidth){
 		        $('.pimage').css('margin-left', 
 		        (initModalWidth/2) - (iniImageWidth / 2) - initModalPadding); //center it if it does fit
-	       	}else{
-	       		$('.pimage').css('margin-left', '');
-	       	}
+	       	//}else{
+	       		//$('.pimage').css('margin-left', '');
+	       	//}
+	       	$( window ).resize(function(){
+			    var initModalWidth = $('.modal-body:visible').outerWidth(); //give an id to .mobile-dialog
+			    //var initModalPadding = $('.modal-body:visible').css('padding-left').split("px")[0];
+			    var initModalPadding = 30;
+			    var iniImageWidth = $('.pimage').outerWidth();
+			    var iniImageHeight = $('.pimage').outerHeight();
+			    //if(iniImageHeight > iniImageWidth){
+			        $('.pimage').css('margin-left', 
+			        (initModalWidth/2) - (iniImageWidth / 2) - initModalPadding); //center it if it does fit
+	       		
+	       	});
 		});
 		
 		$('.product_buy').click(function(){
@@ -1034,6 +1051,7 @@ function queryProduct(){
 				}
 				thisClass.buildCartDetailGrid();
 			}
+			return false;
 		});
     }
     
@@ -1144,6 +1162,12 @@ function queryProduct(){
 		$('#goStage1').addClass('hide');
 		$('#btnSave').addClass('hide');
     }
+    
+    this.productQuery = function(keyword){
+    	thisClass.pageSelect = 1;
+        thisClass.keyword = keyword;
+        thisClass.getProduct();
+    }
 	
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
@@ -1154,6 +1178,7 @@ function queryProduct(){
             thisClass.keyword = '';
             thisClass.buildMenuStep3();
             thisClass.getProduct();
+            return false;
         });
         
         thisClass.menuStepEvent();
@@ -1200,12 +1225,14 @@ function queryProduct(){
         	if($(this).prop('checked')){
         		thisClass.deleteAllCart();
         	}
+        	return false;
         });
         
         $(".confirmModalOK").click(function(){
         	thisClass.objProductCart = [];
         	thisClass.buildCartDetailGrid();
         	$("#confirmModal").modal('hide');
+        	return false;
         });
         
         
@@ -1242,7 +1269,7 @@ function queryProduct(){
 				$("<label class='error'><?php echo $clabal_payerror; ?></label>").insertAfter('.payLabel');
 				$("<label class='error'><?php echo $clabal_shiperror; ?></label>").insertAfter('.shipLabel');
 			}
-			
+			return false;
 		});
 		
 		$('#btnSave').click(function() {
@@ -1264,7 +1291,7 @@ function queryProduct(){
 			$('#stage_one').show();
 			
 			$(this).addClass('hide');
-			
+			return false;
 		});
 		
 		$('#goStage2').click(function () {
@@ -1278,7 +1305,7 @@ function queryProduct(){
 			$(this).hide();
 			
 			$('#goStage1').removeClass('hide');
-			
+			return false;
 		});
 		
         $( "#ship_city" ).autocomplete({

@@ -18,4 +18,5 @@ $lang['label_ext'] = "เบอร์ต่อ";
 $lang['label_fax'] = "แฟกซ์";
 $lang['label_submit'] = "บันทึก";
 $lang['label_email'] = "อีเมล์";
+$lang['label_close'] = "ปิด";
 ?>
