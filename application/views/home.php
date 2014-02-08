@@ -1,6 +1,7 @@
 <script>
         $(document).ready(function() {
                 var qp = new queryProduct();
+                qp.productFirstQuery();
         });
 </script>
 

@@ -967,13 +967,19 @@ function queryProduct(){
         });
     }
     
+    this.countProduct = function(id){
+		var url = urlini+ 'countProduct';
+    	$.post( url, { id:id });
+    }
+    
     this.productQueryEvent = function(){
 		$(".imageProductQuery").click(function(){
+			var id = $(this).attr('data-id');
 			var src = $(this).attr('src');
 			var alt = $(this).attr('alt');
 			$("#imageModalLabel").text(alt);
 			$(".pimage").attr('src', src);
-			//return false;
+			thisClass.countProduct(id);
 		});
 		
 		$('#imageProductModal').on('shown.bs.modal', function() {
@@ -1166,6 +1172,11 @@ function queryProduct(){
     this.productQuery = function(keyword){
     	thisClass.pageSelect = 1;
         thisClass.keyword = keyword;
+        thisClass.getProduct();
+    }
+	
+    this.productFirstQuery = function(){
+    	thisClass.pageSelect = 1;
         thisClass.getProduct();
     }
 	

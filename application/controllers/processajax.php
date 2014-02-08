@@ -228,29 +228,54 @@ class Processajax extends Main_Controller {
 	
 			}
 		}
-		if(empty($page)){
-			$limit = "LIMIT $numberLimit";
+		if(empty($step) && empty($menuid) && empty($keyword)){
+			if(empty($page)){
+				$limit = "LIMIT $numberLimit";
+			}else{
+				$start = ($page-1) * $numberLimit;
+				$limit = "LIMIT $start, $numberLimit";
+			}
+			$count = $numberLimit * 4;
 		}else{
-			$start = ($page-1) * $numberLimit;
-			$limit = "LIMIT $start, $numberLimit";
-		}
-		
-		$SQL_COUNT = "select count(*) as count
+			if(empty($page)){
+				$limit = "LIMIT $numberLimit";
+			}else{
+				$start = ($page-1) * $numberLimit;
+				$limit = "LIMIT $start, $numberLimit";
+			}
+			$SQL_COUNT = "select count(*) as count
 				from kt_product as kp 
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
 				where kp.is_active='Y' and kp.is_delete='N' {$where}";
-		$count = $this->db->query($SQL_COUNT)->result();
-		
-		$count = $count[0]->count;
+			
+			$count = $this->db->query($SQL_COUNT)->result();
+			
+			$count = $count[0]->count;
+		}
 		
 		$response->page[0] = ceil ( $count / $numberLimit );
 		
-		
+		if(empty($step) && empty($menuid) && empty($keyword)){
+			$order = "order by kpv.view desc";
+			$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+				from kt_product as kp
+				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
+				left join kt_product_stock as kps on (kp.id = kps.pid) 
+				left join kt_product_view as kpv on (kp.id = kpv.pid) 
+				where kp.is_active='Y' and kp.is_delete='N' {$where} {$order} {$limit}";
+		}else{
+			if($this->session['language'] == 'thailand'){
+				$order = "order by kp.name_th desc";
+			}else if($this->session['language'] == 'english'){
+				$order = "order by kp.name_en desc";
+			}
+			
 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
 				from kt_product as kp
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
-				where kp.is_active='Y' and kp.is_delete='N' {$where} {$limit}";
+				where kp.is_active='Y' and kp.is_delete='N' {$where} {$order} {$limit}";
+		}
 		//var_dump($SQL);
 
         //$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kp.unit, kp.price, kp.stock, kp.weight from kt_product as kp left join kt_product_stock as kps on (kp.id = kps.pid) where kps.pstock = 0";
@@ -594,6 +619,12 @@ class Processajax extends Main_Controller {
 		$this->email->subject('Test email');
 		$this->email->message('test message email');
 		$this->email->send();
+	}
+	
+	public function countProduct(){
+		$id = $_REQUEST['id'];
+		$SQL = "INSERT INTO kt_product_view (pid,view) VALUES ({$id}, 1) ON DUPLICATE KEY UPDATE view=view+1";
+		$result = $this->db->query($SQL);
 	}
     
 }
