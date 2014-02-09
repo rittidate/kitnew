@@ -32,6 +32,7 @@ class Excel extends Main_Controller {
 									 ->setDescription("Media Plan for Office 2007 XLSX, generated using PHP classes.")
 									 ->setKeywords("office 2007 openxml php")
 									 ->setCategory("Media Plan");
+	 	$this->ex->getActiveSheet()->getDefaultStyle()->getFont()->setName('angsanaupc');
 		$activeSheet->setCellValue('A1' , $label->firstname);
 		$activeSheet->setCellValue('B1' , $order->firstname);
 		$activeSheet->setCellValue('C1' , $label->lastname);

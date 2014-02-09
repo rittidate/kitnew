@@ -235,7 +235,19 @@ class Processajax extends Main_Controller {
 				$start = ($page-1) * $numberLimit;
 				$limit = "LIMIT $start, $numberLimit";
 			}
-			$count = $numberLimit * 4;
+			$SQL_COUNT = "select count(*) as count
+			from kt_product as kp 
+			left join kt_product_stock as kps on (kp.id = kps.pid) 
+			left join kt_product_view as kpv on (kp.id = kpv.pid) 
+			where kp.is_active='Y' and kp.is_delete='N' and kps.pstock > 0 {$where}";
+			
+			$count = $this->db->query($SQL_COUNT)->result();
+			
+			$count = $count[0]->count;
+			$maxcount= $numberLimit * 4;
+			if($count > $maxcount)
+				$count = $maxcount;
+			
 		}else{
 			if(empty($page)){
 				$limit = "LIMIT $numberLimit";
@@ -246,7 +258,7 @@ class Processajax extends Main_Controller {
 			$SQL_COUNT = "select count(*) as count
 				from kt_product as kp 
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
-				where kp.is_active='Y' and kp.is_delete='N' {$where}";
+				where kp.is_active='Y' and kp.is_delete='N' and kps.pstock > 0 {$where}";
 			
 			$count = $this->db->query($SQL_COUNT)->result();
 			
@@ -262,7 +274,7 @@ class Processajax extends Main_Controller {
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
 				left join kt_product_view as kpv on (kp.id = kpv.pid) 
-				where kp.is_active='Y' and kp.is_delete='N' {$where} {$order} {$limit}";
+				where kp.is_active='Y' and kp.is_delete='N' and kps.pstock > 0 {$where} {$order} {$limit}";
 		}else{
 			if($this->session['language'] == 'thailand'){
 				$order = "order by kp.name_th desc";
@@ -274,7 +286,7 @@ class Processajax extends Main_Controller {
 				from kt_product as kp
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
-				where kp.is_active='Y' and kp.is_delete='N' {$where} {$order} {$limit}";
+				where kp.is_active='Y' and kp.is_delete='N' and kps.pstock > 0 {$where} {$order} {$limit}";
 		}
 		//var_dump($SQL);
 
@@ -316,8 +328,8 @@ class Processajax extends Main_Controller {
     }
 
     public function getSessionCart(){
-		 $json = $this->session['cart'];
 		 if(!empty($this->session['cart'])){
+		 	$json = $this->session['cart'];
 			 $i=0;
 			 foreach ($json as $key => $value) {
 			 	$where = "and kp.id = {$value->id}";
@@ -325,7 +337,7 @@ class Processajax extends Main_Controller {
 					from kt_product as kp
 					left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 					left join kt_product_stock as kps on (kp.id = kps.pid) 
-					where kp.is_active='Y' and kp.is_delete='N' {$where} ";
+					where kp.is_active='Y' and kp.is_delete='N' and kps.pstock > 0 {$where} ";
 					
 			        $result = $this->db->query($SQL)->result();
 			        
@@ -343,6 +355,7 @@ class Processajax extends Main_Controller {
 			            $response->rows[$i]['stock'] = intval($row->stock);
 			            $response->rows[$i]['weight'] = $row->weight;
 			            $response->rows[$i]['qty'] = $value->qty;
+			            $response->rows[$i]['image'] = $row->image;
 			            $i++;
 			        }
 			 }

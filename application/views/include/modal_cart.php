@@ -471,7 +471,7 @@ function queryProduct(){
         var option = '';
         option += "<select class='productCart_qty' data-id='"+pid+"'>";
         if(len > 0){
-	        for (var i=1;i<len;i++)
+	        for (var i=1;i<=len;i++)
 	        {
 	            if(i == qty){
 	                option += "<option value='"+i+"' selected>"+i+"</option>";
@@ -489,7 +489,7 @@ function queryProduct(){
         var option = '';
         option += "<select class='product_qty' data-id='"+pid+"'>";
         if(len > 0){
-	        for (var i=1;i<len;i++)
+	        for (var i=1;i<=len;i++)
 	        {
 	                option += "<option value='"+i+"'>"+i+"</option>";
 	        }
@@ -623,6 +623,7 @@ function queryProduct(){
     this.getSessionCart = function(obj){
     	var url = urlini+ 'getSessionCart';
     	var obj = [];
+    	var unit, volumn, qty, image;
     	$.getJSON( url, 
     		function(result){
         		if(result.rows !== undefined){
@@ -637,18 +638,29 @@ function queryProduct(){
 	            		}else{
 	            			volumn = val.volumn;
 	            		}
+	            		if(val.image == ''){
+	            			image = '<?php echo base_url('pimage/') ?>no_image.jpg';
+	            		}else{
+	            			image = '<?php echo base_url('pimage/') ?>large/'+val.image;
+	            		}
 	            		var productName = val.name+" "+volumn+" "+unit;
 	            		
 						if(val.stock > 0){
+							if(val.stock < val.qty){
+								qty = val.stock;
+							}else{
+								qty = val.qty;
+							}
 							obj.push({ 
 		        		 		 id : val.id,
 								 barcode : val.barcode,
 								 name : productName,
 								 price : val.price,
-								 qty : val.qty,
+								 qty : qty,
 								 total : val.price * val.qty,
 								 stock : val.stock,
-								 weight : val.weight
+								 weight : val.weight,
+								 image : image
 								});
 						}
 	            	});
@@ -1010,15 +1022,13 @@ function queryProduct(){
 		$('.product_buy').click(function(){
 			var id = $(this).attr('data-id');
 			var barcode = $(".product_barcode[data-id='"+id+"']").text();
-			//var qty = $(".product_qty[data-id='"+id+"']").val();
+			var qty = $(".product_qty[data-id='"+id+"']").val();
 			var name = $(".product_name[data-id='"+id+"']").text();
 			var price = parseInt($(".product_price[data-id='"+id+"']").text());
 			var image = $(".imageProductQuery[data-id='"+id+"']").attr('src');
-			//var stock = $(".product_stock[data-id='"+id+"']").val();
+			var stock = $(".product_stock[data-id='"+id+"']").val();
 			var weight = $(".product_weight[data-id='"+id+"']").val();
 			
-			var stock = 99;
-			var qty = 1;
 			if(qty !== null){
 				var obj= { 
 		        		 	id : id,
@@ -1340,7 +1350,6 @@ function queryProduct(){
 		thisClass.getSessionCart();
        	thisClass.initValidateForm();
     }
-
 
     thisClass.iniControl();
 }

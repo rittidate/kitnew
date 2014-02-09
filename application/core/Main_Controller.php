@@ -15,8 +15,14 @@ class Main_Controller extends MY_Controller
       
       $this->load->library('kv');
       $this->load->library('fb');
-
       $this->user_facebook = $this->fb->sdk->getUser();
+	  
+	  $server = $_SERVER['SERVER_NAME']."/";
+	  $domain = preg_replace('#^https?://#', '', base_url());
+	  
+	  if($server !== $domain){
+	  	redirect(base_url(), 'refresh');
+	  }
 
       $this->getUniqueViewerId();
    }
