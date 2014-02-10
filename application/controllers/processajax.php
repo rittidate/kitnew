@@ -560,6 +560,30 @@ class Processajax extends Main_Controller {
 		
 		$json = json_decode($_REQUEST['json']);
 		
+		$aDetail = array(
+						'firstname' =>$firstname,
+						'lastname' =>$lastname,
+						'address1' =>$address1,
+						'address2' =>$address2,
+						'address3' =>$address3,
+						'address4' =>$address4,
+						'city' => $city,
+						'state' => $state,
+						'country' => $country,
+						'zipcode' => $zipcode,
+						'mobile' =>$mobile,
+						'telephone' =>$telephone,
+						'telephone_ext' =>$telephone_ext,
+						'fax' =>$fax,
+						'fax_ext' =>$fax_ext,
+						'email' =>$email,
+						'payment_id' =>$payment_id,
+						'shipment_id' =>$shipment_id,
+						'subtotal' =>$subtotal,
+						'shipprice' =>$shipprice,
+						'grandtotal' =>$grandtotal,
+						);
+		
 		$cid = !empty($this->session['user']) ? $this->session['user'] : 0;
 		
       	$insert_order = array(
@@ -597,9 +621,32 @@ class Processajax extends Main_Controller {
        	);
        	$this->db->insert('kt_order', $insert_order);
 		$order_id = $this->db->insert_id();
+		
+               
 		foreach($json as $value){
-			$product = $this->db->where('id', $value->id)->get('kt_product')->row();
+			$product = $this->db->where('kp.id', $value->id)->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
+				from kt_product as kp
+				left join kt_define_data_type as kdt on (kp.unit = kdt.id)")->row();
 			$sumweight = $value->weight * $value->qty;
+			
+			if($this->session['language'] == 'english'){
+				$productName = $product->name_en." ".$product->volumn." ".$product->unittype;
+			}else{
+				$productName = $product->name_th." ".$product->volumn." ".$product->unittype;
+			}
+    		if($product->image == ''){
+    			$image = base_url('pimage/').'no_image.jpg';
+    		}else{
+    			$image = base_url('pimage/').'large/'.$product->image;
+    		}
+			
+			$message .= "<tr>";
+			$message .= "<th><img alt='".$productName."' style='width: 60px; height: 40px;' src='".$image."'></th>";
+			$message .= "<th>".$product->barcode."</th>";  
+			$message .= "<th>".$productName."</th>";  
+			$message .= "<th style='width:20px;'>".$value->price."</th>";  
+			$message .= "<th align='right'>".$value->total." ".$plabel_baht."</th>";   
+			$message .= "</tr>";     
 			
 			$insert_orderDetail = array(
 				'order_id' => $order_id,
@@ -618,20 +665,91 @@ class Processajax extends Main_Controller {
 			);
 			$this->db->insert('kt_orderdetail', $insert_orderDetail);
 		}
-		$this->sendEmailOrder($email, $order_id);
+		$message = $this->orderEmailMessage($order_id, $aDetail, $json);
+		$message .= "<tr>";
+		$message .= "<td colspan='3' align='right'>".$plabel_subtotal."</td>";
+		$message .= "<td colspan='2' align='right'>".$subtotal." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "<tr>";
+		$message .= "<td colspan='3' align='right'>".$plabel_shipprice."</td>";
+		$message .= "<td colspan='2' align='right'>".$shipprice." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "<tr>";
+		$message .= "<td colspan='3' align='right'>".$plabel_grandtotal."</td>";
+		$message .= "<td colspan='2' align='right'>".$grandtotal." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "</tbody></table>";
+		$this->sendEmailOrder($email, $order_id, $message);
 		
 		$response->order[0]['id'] = $order_id;
 		echo json_encode($response);
 		
 	}
 
-	public function sendEmailOrder($email = '', $orderid = ''){
+	public function sendEmailOrder($email = '', $orderid = '', $message = ''){
+		$this->lang->load('email', $this->session['language']);
+		$email_header = $this->lang->line("email_header");
 		$this->load->library('email');
 		$this->email->from('arraieot@gmail.com');
 		$this->email->to($email);
-		$this->email->subject('Test email');
-		$this->email->message('test message email');
+		$this->email->subject($email_header.$orderid);
+		$this->email->message($message);
 		$this->email->send();
+	}
+	
+	private function orderEmailMessage($orderid = '', $aDetail = array(), $json){
+        $this->lang->load('modal_user', $this->session['language']);
+		$label_address1 = $this->lang->line("label_address1");
+		$label_address2 = $this->lang->line("label_address2");
+		$label_address3 = $this->lang->line("label_address3");
+		$label_address4 = $this->lang->line("label_address4");
+		$label_city = $this->lang->line("label_city");
+		$label_state = $this->lang->line("label_state");
+		$label_country = $this->lang->line("label_country");
+		$label_zipcode = $this->lang->line("label_zipcode");
+		$label_mobile = $this->lang->line("label_mobile");
+		$label_telephone = $this->lang->line("label_telephone");
+		$label_ext = $this->lang->line("label_ext");
+		$label_fax = $this->lang->line("label_fax");
+		$label_email = $this->lang->line("label_email");
+		
+        $this->lang->load('product', $this->session['language']);
+
+        $plabel_barcode = $this->lang->line("plabel_barcode");
+		$plabel_product = $this->lang->line("plabel_product");
+        $plabel_price = $this->lang->line("plabel_price");
+        $plabel_baht = $this->lang->line("plabel_baht");
+        $plabel_qty = $this->lang->line("plabel_qty");
+		$plabel_total = $this->lang->line("plabel_total");
+		$plabel_subtotal = $this->lang->line("plabel_subtotal");
+		$plabel_shipprice = $this->lang->line("plabel_shipprice");
+		$plabel_grandtotal = $this->lang->line("plabel_grandtotal");
+		$plabel_image = $this->lang->line("plabel_image");
+		
+		$this->lang->load('email', $this->session['language']);
+		$email_header = $this->lang->line("email_header");
+		
+		$message = '';
+		
+		$message .= "<table><tbody>";
+		$message .= "<tr><td>";
+		$message .= $email_header." ".$order_id."<br><br>";
+		$message .= $aDetail('firstname')." ".$aDetail('lastname')."<br>";
+		$message .= $label_address1." ".$aDetail('address1')."<br>";
+		$message .= $label_address2." ".$aDetail('address2')." ".$label_address3." ".$aDetail('address3')." ".$label_address4." ".$aDetail('address4')."<br>";
+		$message .= $label_city." ".$aDetail('city')." ".$label_state." ".$aDetail('state')." ".$label_zipcode." ".$zipcode." ".$label_country." ".$country."<br>";
+		$message .= $label_mobile." ".$mobile." ".$label_telephone." ".$telephone." ".$label_ext." ".$telephone_ext." ".$label_fax." ".$fax." ".$label_ext." ".$fax_ext."<br>";
+		$message .= "</td></tr>";
+		$message .= "</tbody></table>";
+		$message .= "<br><br>";
+		$message .= "<table><thead><tr>";
+		$message .= "<th>".$plabel_image."</th>";    
+		$message .= "<th>".$plabel_barcode."</th>";  
+		$message .= "<th>".$plabel_product."</th>";  
+		$message .= "<th style='width:20px;'>".$plabel_price."</th>";  
+		$message .= "<th align='right'>".$plabel_total."</th>";                          
+		$message .= "</tr></thead><tbody>"; 
+		     
 	}
 	
 	public function countProduct(){

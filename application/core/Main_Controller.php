@@ -10,19 +10,19 @@ class Main_Controller extends MY_Controller
    function __construct()
    {
       parent::__construct();
+	  
+  	  $server = $_SERVER['SERVER_NAME']."/";
+	  $domain = preg_replace('#^https?://#', '', base_url());
+	  
+	  if($server !== $domain){
+	  	redirect(base_url(), 'refresh');
+	  }
       
       $this->varviewer = 'OCID';
       
       $this->load->library('kv');
       $this->load->library('fb');
       $this->user_facebook = $this->fb->sdk->getUser();
-	  
-	  $server = $_SERVER['SERVER_NAME']."/";
-	  $domain = preg_replace('#^https?://#', '', base_url());
-	  
-	  if($server !== $domain){
-	  	redirect(base_url(), 'refresh');
-	  }
 
       $this->getUniqueViewerId();
    }
@@ -98,7 +98,6 @@ class Main_Controller extends MY_Controller
 
     public function navbarMenu()
     {
-        //$language = "thailand";
         if(empty($this->session['language'])){
             $language = 'english';
         }else{
@@ -130,8 +129,6 @@ class Main_Controller extends MY_Controller
             $data["logout"] = $logout;
         }
 		
-		
-
         $this->load->view('include/navbar', $data);
     }
 
@@ -140,8 +137,7 @@ class Main_Controller extends MY_Controller
         if(empty($this->session['user'])){
             $this->load->view('include/modal_login');
         }else{
-           $user = $this->db->where('id', $this->session['user'])
-                           ->get('kt_customer')->row();
+            $user = $this->db->where('id', $this->session['user'])->get('kt_customer')->row();
 
             $this->lang->load('modal_user', $this->session['language']);
             $data["label_salutation"] = $this->lang->line("label_salutation");
@@ -243,8 +239,7 @@ class Main_Controller extends MY_Controller
 		$data["clabal_order_number"] = $this->lang->line("clabal_order_number");
 		
 		if(!empty($this->session['user']) && empty($this->session['ship'])){
-	       $user = $this->db->where('id', $this->session['user'])
-	               ->get('kt_customer')->row();
+	       $user = $this->db->where('id', $this->session['user'])->get('kt_customer')->row();
 				   
 	       $data["id"] = $user->id;
 	       $data["firstname"] = $user->firstname;
@@ -267,7 +262,6 @@ class Main_Controller extends MY_Controller
 	       $data["fax_ext"] = $user->fax_ext;
 		   $data["email"] = $user->email;
         }else if(!empty($this->session['ship'])){
-	       //$data["id"] = $user->id;
 	       $data["firstname"] = $this->session['ship']['firstname'];
 	       $data["lastname"] = $this->session['ship']['lastname'];
 	       $data["salutation"] = form_dropdown('salutation', $this->kv->getSalutation(), $this->session['ship']['salutation'], 'class="form-control" id="ship_salutation"');
