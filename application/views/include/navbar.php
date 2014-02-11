@@ -14,6 +14,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="<?php echo base_url(); ?>"><?php echo $home; ?></a></li>
+            <!--
             <li><a href="#about"><?php echo $about; ?></a></li>
             <li><a href="#contact">Contact</a></li>
             <li class="dropdown">
@@ -28,22 +29,25 @@
                 <li><a href="#">One more separated link</a></li>
               </ul>
             </li>
+            -->
           </ul>
           
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#" ><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> <?php echo $map; ?></span></a></li>
+            <li><a href="#" data-toggle="modal" data-target="#mapModal"><i class="fa fa-map-marker hidden-xs fa-2x"></i><span class="fa fa-map-marker visible-xs"> <?php echo $map; ?></span></a></li>
             <li>
             	<a href="#" data-toggle="modal" data-target="#userModal" title="<?php echo $user; ?>">
             		<i class="fa fa-user hidden-xs fa-2x"></i>
             		<span class="fa fa-user visible-xs"> <?php echo $user; ?></span>
             		</a>
     		</li>
-            <li>
-            	<a href="#">
+            <li class="dropdown">
+            	<a data-toggle="dropdown" class="dropdown-toggle" href="#">
             	<i class="fa fa-clipboard hidden-xs fa-2x"></i>
             	<span class="fa fa-clipboard visible-xs"> <?php echo $order; ?></span>
-            	</a>
             	<span class="badge hidden-xs orderNotify" style="position: absolute; top:8px; left:35px; background-color: #FF0000;">0</span>
+            	</a>
+                <ul class="dropdown-menu order_member">
+                </ul>
         	</li>
             <li>
             	<a href="#"  data-toggle="modal" data-target="#cartModal">
@@ -54,7 +58,10 @@
         		
     		</li>
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="fa fa-cogs hidden-xs fa-2x"><b class="caret"></b></i><span class="fa fa-cogs visible-xs"> <?php echo $config; ?><b class="caret"></b></span></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                	<i class="fa fa-cogs hidden-xs fa-2x"><b class="caret"></b></i>
+                	<span class="fa fa-cogs visible-xs"> <?php echo $config; ?><b class="caret"></b></span>
+                </a>
                 <ul class="dropdown-menu">
                     <li><a href="<?php echo base_url().'language'; ?>">EN / TH</a></li>
                     <?php echo $logout; ?>

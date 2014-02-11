@@ -359,10 +359,53 @@ class Processajax extends Main_Controller {
 			            $i++;
 			        }
 			 }
-			 echo json_encode($response);
+		 }
+		 
+		 if(!empty($this->session['order']) && !empty($this->session['user'])){
+		 	$where = array('customer_id' => $this->session['user'],
+							'is_active' => 'Y',
+							'is_delete' => 'N');
+		 	$result = $this->db->where($where)->order_by('id', 'ASC')->get('kt_order')->result();
+			$i = 0;
+			$aOrder = array();
+			foreach($result as $order){
+				$response->orders[$i]['id'] = $order->id;
+				array_push($aOrder, $order->id);
+				$i++;
+			}
+			
+			foreach ($this->session['order'] as $value) {
+				if(!in_array($value, $aOrder)){
+					$response->orders[$i]['id'] = $value;
+					$i++;
+				}
+			}
+		 }else if(empty($this->session['order']) && !empty($this->session['user'])){
+		 	$where = array('customer_id' => $this->session['user'],
+							'is_active' => 'Y',
+							'is_delete' => 'N');
+		 	$result = $this->db->where($where)->order_by('id', 'ASC')->get('kt_order')->result();
+			$i = 0;
+			$aOrder = array();
+			foreach($result as $order){
+				$response->orders[$i]['id'] = $order->id;
+				array_push($aOrder, $order->id);
+				$i++;
+			}
+		 }else if(!empty($this->session['order']) && empty($this->session['user'])){
+			$i = 0;
+			foreach ($this->session['order'] as $value) {
+					$response->orders[$i]['id'] = $value;
+					$i++;
+			}
+		 }
+
+		if(!empty($response)){
+			echo json_encode($response);
 		 }else{
 		 	echo json_encode('');
 		 }
+
 
     }
     
@@ -624,9 +667,10 @@ class Processajax extends Main_Controller {
 		
                
 		foreach($json as $value){
-			$product = $this->db->where('kp.id', $value->id)->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
+			$product = $this->db->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
 				from kt_product as kp
-				left join kt_define_data_type as kdt on (kp.unit = kdt.id)")->row();
+				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
+				WHERE kp.id = {$value->id}")->row();
 			$sumweight = $value->weight * $value->qty;
 			
 			$insert_orderDetail = array(
@@ -648,6 +692,21 @@ class Processajax extends Main_Controller {
 		}
 		$message = $this->orderEmailMessage($order_id, $aDetail, $json);
 		$this->sendEmailOrder($email, $order_id, $message);
+		
+		unset($this->session['cart']);
+		
+		if(empty($this->session['order'])){
+			$this->session['order'] = array($order_id);
+		}else{
+			array_push($this->session['order'], $order_id);
+		}
+		
+       $update = array(
+            'ocid' => $this->viewerId,
+            'sessiondata' => serialize($this->session),
+            'lastused' => date('Y-m-d H:i:s')
+       );
+       $this->db->update('kt_session', $update, array('ocid' => $_COOKIE[$this->varviewer]));
 		
 		$response->order[0]['id'] = $order_id;
 		echo json_encode($response);
@@ -731,9 +790,10 @@ class Processajax extends Main_Controller {
 		$message .= "</tr></thead><tbody>"; 
 		
 		foreach($json as $value){
-			$product = $this->db->where('kp.id', $value->id)->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
+			$product = $this->db->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
 				from kt_product as kp
-				left join kt_define_data_type as kdt on (kp.unit = kdt.id)")->row();
+				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
+				WHERE kp.id = {$value->id}")->row();
 			
 			if($this->session['language'] == 'english'){
 				$productName = $product->name_en." ".$product->volumn." ".$product->unittype;

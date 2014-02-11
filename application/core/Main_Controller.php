@@ -90,6 +90,7 @@ class Main_Controller extends MY_Controller
         $this->advertiserMain();
         $this->sidebarMenu();
 		$this->modalImage();
+		$this->modalMap();
     }
 
     private function headerMain()
@@ -124,7 +125,7 @@ class Main_Controller extends MY_Controller
 			if($this->user_facebook){
 				$data["profile"] = '<li><a href="#" data-toggle="modal" data-target="#userModal"><img src="http://graph.facebook.com/'.$this->session['facebook_id'].'/picture" height="50" width="50 " class="img-circle"></a></li>';
 			}
-		}else if(!empty($this->session['user']) && $this->session['google_id']){
+		}else if(!empty($this->session['user']) && !empty($this->session['google_id'])){
             $logout = "<li class='divider'></li>";
             $logout .= "<li><a href='".base_url()."login/logout/"."'>".$this->lang->line("logout")."</a></li>";
 			$data["logout"] = $logout;
@@ -315,6 +316,11 @@ class Main_Controller extends MY_Controller
 	private function modalImage()
 	{
 		$this->load->view('include/modal_image');
+	}
+	
+	private function modalMap()
+	{
+		$this->load->view('include/modal_map');
 	}
 
     public function advertiserMain()

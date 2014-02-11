@@ -665,6 +665,13 @@ function queryProduct(){
 						}
 	            	});
             	}
+            	
+    			if(result.orders !== undefined){
+	            	$.each(result.orders, function(ini, val){
+						$("<li><a href='<?php echo base_url()?>excel/pdf/"+val.id+"'>Order ID. "+val.id+"</a></li>").prependTo(".order_member");
+	            	});
+	            	$(".orderNotify").text(result.orders.length);
+            	}
 	            	thisClass.objProductCart = obj;
 	            	thisClass.buildCartDetailGrid();
     		});
@@ -880,6 +887,8 @@ function queryProduct(){
 		        $(".success_payment").text($(".optionsPayment:checked").parent('label').text());
 		        
 		        $(".order_number").text(result.order[0].id);
+		        $("<li><a href='<?php echo base_url()?>excel/pdf/"+result.order[0].id+"'>Order ID. "+result.order[0].id+"</a></li>").prependTo(".order_member");
+		        $(".orderNotify").text(parseInt($(".orderNotify").text())+1);
 		        thisClass.buildCartDetailSuccess();
 		        thisClass.objProductCart = [];
 		        thisClass.buildCartDetailGrid();
