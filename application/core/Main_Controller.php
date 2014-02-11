@@ -22,6 +22,7 @@ class Main_Controller extends MY_Controller
       
       $this->load->library('kv');
       $this->load->library('fb');
+	  $this->load->library('googleplus');
       $this->user_facebook = $this->fb->sdk->getUser();
 
       $this->getUniqueViewerId();
@@ -123,6 +124,11 @@ class Main_Controller extends MY_Controller
 			if($this->user_facebook){
 				$data["profile"] = '<li><a href="#" data-toggle="modal" data-target="#userModal"><img src="http://graph.facebook.com/'.$this->session['facebook_id'].'/picture" height="50" width="50 " class="img-circle"></a></li>';
 			}
+		}else if(!empty($this->session['user']) && $this->session['google_id']){
+            $logout = "<li class='divider'></li>";
+            $logout .= "<li><a href='".base_url()."login/logout/"."'>".$this->lang->line("logout")."</a></li>";
+			$data["logout"] = $logout;
+			$data["profile"] = '<li><a href="#" data-toggle="modal" data-target="#userModal"><img src="https://plus.google.com/s2/photos/profile/'.$this->session['google_id'].'?sz=100" height="50" width="50 " class="img-circle"></a></li>';
         }else if(!empty($this->session['user'])){
             $logout = "<li class='divider'></li>";
             $logout .= "<li><a href='".base_url()."login/logout/"."'>".$this->lang->line("logout")."</a></li>";

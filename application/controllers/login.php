@@ -56,6 +56,63 @@ class Login extends Main_Controller {
         }
    }
 
+   public function google(){
+   		//var_dump($this->googleplus->getAccessToken());
+    if (isset($_GET['code'])) {
+
+        $this->googleplus->client->authenticate();
+
+        $_SESSION['token'] = $this->googleplus->client->getAccessToken();
+
+        $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+
+        header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+
+    }
+	/*
+    if ($_SESSION['token'])
+    {
+        $this->googleplus->client->setAccessToken($_SESSION['token']);
+    }
+	 */
+    if ($this->googleplus->client->getAccessToken())
+    {
+    	  $user_profile = $this->googleplus->oauth2->userinfo->get();
+           $have_row = $this->db->having('email', $user_profile['email'])->get('kt_customer');
+           if($have_row->num_rows > 0){
+               $user = $this->db->where('email', $user_profile['email'])
+                       ->get('kt_customer')->row();
+               $this->session['user'] = $user->id;
+               $this->session['google_id'] = $user_profile['id'];
+           }else{
+               $data = array('firstname' => $user_profile["given_name"],
+                             'lastname' => $user_profile["family_name"],
+                             'email' => $user_profile["email"],
+                             'password' => md5($user_profile["id"]),
+                             'is_delete' => 'N',
+                             'is_active' => 'Y',
+                             'create_date' => date('Y-m-d H:i:s'),
+                             );
+               $this->db->insert('kt_customer', $data);
+               $insert_id = $this->db->insert_id();
+               $this->session['user'] = $insert_id;
+               $this->session['google_id'] = $user_profile['id'];
+           }
+
+           $update = array(
+                'sessiondata' => serialize($this->session),
+                'lastused' => date('Y-m-d H:i:s')
+           );
+           $this->db->update('kt_session', $update, array('ocid' => $_COOKIE[$this->varviewer]));
+        $_SESSION['token'] = $this->googleplus->client->getAccessToken();
+		redirect(base_url());
+    }else{
+        $authUrl = $this->googleplus->client->createAuthUrl();
+		redirect($authUrl);
+    }
+
+   }
+
   public function form(){
         $email = trim($_POST["email"]);
         $password = md5(trim($_POST["password"]));
@@ -79,6 +136,9 @@ class Login extends Main_Controller {
    public function logout(){
       unset($this->session['user']);
       unset($this->session['facebook_id']);
+	  unset($this->session['google_id']);
+	  unset($_SESSION['access_token']);
+ 	  unset($_SESSION['gplusuer']);
       $update = array(
             'sessiondata' => serialize($this->session),
             'lastused' => date('Y-m-d H:i:s')

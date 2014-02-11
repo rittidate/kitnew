@@ -629,25 +629,6 @@ class Processajax extends Main_Controller {
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)")->row();
 			$sumweight = $value->weight * $value->qty;
 			
-			if($this->session['language'] == 'english'){
-				$productName = $product->name_en." ".$product->volumn." ".$product->unittype;
-			}else{
-				$productName = $product->name_th." ".$product->volumn." ".$product->unittype;
-			}
-    		if($product->image == ''){
-    			$image = base_url('pimage/').'no_image.jpg';
-    		}else{
-    			$image = base_url('pimage/').'large/'.$product->image;
-    		}
-			
-			$message .= "<tr>";
-			$message .= "<th><img alt='".$productName."' style='width: 60px; height: 40px;' src='".$image."'></th>";
-			$message .= "<th>".$product->barcode."</th>";  
-			$message .= "<th>".$productName."</th>";  
-			$message .= "<th style='width:20px;'>".$value->price."</th>";  
-			$message .= "<th align='right'>".$value->total." ".$plabel_baht."</th>";   
-			$message .= "</tr>";     
-			
 			$insert_orderDetail = array(
 				'order_id' => $order_id,
 				'pid' => $value->id,
@@ -666,19 +647,6 @@ class Processajax extends Main_Controller {
 			$this->db->insert('kt_orderdetail', $insert_orderDetail);
 		}
 		$message = $this->orderEmailMessage($order_id, $aDetail, $json);
-		$message .= "<tr>";
-		$message .= "<td colspan='3' align='right'>".$plabel_subtotal."</td>";
-		$message .= "<td colspan='2' align='right'>".$subtotal." ".$plabel_baht."</td>";
-		$message .= "</tr>";
-		$message .= "<tr>";
-		$message .= "<td colspan='3' align='right'>".$plabel_shipprice."</td>";
-		$message .= "<td colspan='2' align='right'>".$shipprice." ".$plabel_baht."</td>";
-		$message .= "</tr>";
-		$message .= "<tr>";
-		$message .= "<td colspan='3' align='right'>".$plabel_grandtotal."</td>";
-		$message .= "<td colspan='2' align='right'>".$grandtotal." ".$plabel_baht."</td>";
-		$message .= "</tr>";
-		$message .= "</tbody></table>";
 		$this->sendEmailOrder($email, $order_id, $message);
 		
 		$response->order[0]['id'] = $order_id;
@@ -697,7 +665,7 @@ class Processajax extends Main_Controller {
 		$this->email->send();
 	}
 	
-	private function orderEmailMessage($orderid = '', $aDetail = array(), $json){
+	private function orderEmailMessage($orderid = '', $aDetail = array(), $json = array()){
         $this->lang->load('modal_user', $this->session['language']);
 		$label_address1 = $this->lang->line("label_address1");
 		$label_address2 = $this->lang->line("label_address2");
@@ -728,28 +696,90 @@ class Processajax extends Main_Controller {
 		
 		$this->lang->load('email', $this->session['language']);
 		$email_header = $this->lang->line("email_header");
+		$email_document = $this->lang->line("email_document");
+		$email_payment_tell = $this->lang->line("email_payment_tell");
+		$email_end = $this->lang->line("email_end");
 		
 		$message = '';
 		
+		$message .= "<style type='text/css'>";
+		$message .= ".Table { background-color:#FFFFE0;border-collapse:collapse;color:#000;font-size:18px; }";
+		$message .= ".Table th { background-color:#BDB76B;color:white; }";
+		$message .= ".Table td, .myOtherTable th { padding:5px;border:0; }";
+		$message .= ".Table td { border-bottom:1px dotted #BDB76B; }";
+		$message .= "</style>";
+
 		$message .= "<table><tbody>";
 		$message .= "<tr><td>";
-		$message .= $email_header." ".$order_id."<br><br>";
-		$message .= $aDetail('firstname')." ".$aDetail('lastname')."<br>";
-		$message .= $label_address1." ".$aDetail('address1')."<br>";
-		$message .= $label_address2." ".$aDetail('address2')." ".$label_address3." ".$aDetail('address3')." ".$label_address4." ".$aDetail('address4')."<br>";
-		$message .= $label_city." ".$aDetail('city')." ".$label_state." ".$aDetail('state')." ".$label_zipcode." ".$zipcode." ".$label_country." ".$country."<br>";
-		$message .= $label_mobile." ".$mobile." ".$label_telephone." ".$telephone." ".$label_ext." ".$telephone_ext." ".$label_fax." ".$fax." ".$label_ext." ".$fax_ext."<br>";
+		$message .= $email_header.$orderid."<br><br>";
+		$message .= $aDetail['firstname']." ".$aDetail['lastname']."<br>";
+				
+		$message .= $label_address1." ".$aDetail['address1']."<br>";
+		$message .= $label_address2." ".$aDetail['address2']." ".$label_address3." ".$aDetail['address3']." ".$label_address4." ".$aDetail['address4']."<br>";
+		$message .= $label_city." ".$aDetail['city']." ".$label_state." ".$aDetail['state']." ".$label_zipcode." ".$aDetail['zipcode']." ".$label_country." ".$aDetail['country']."<br>";
+		$message .= $label_mobile." ".$aDetail['mobile']." ".$label_telephone." ".$aDetail['telephone']." ".$label_ext." ".$aDetail['telephone_ext']." ".$label_fax." ".$aDetail['fax']." ".$label_ext." ".$aDetail['fax_ext'];
 		$message .= "</td></tr>";
 		$message .= "</tbody></table>";
 		$message .= "<br><br>";
-		$message .= "<table><thead><tr>";
+		$message .= "<table class='Table'><thead><tr>";
 		$message .= "<th>".$plabel_image."</th>";    
 		$message .= "<th>".$plabel_barcode."</th>";  
 		$message .= "<th>".$plabel_product."</th>";  
-		$message .= "<th style='width:20px;'>".$plabel_price."</th>";  
+		$message .= "<th>".$plabel_price."</th>";  
+		$message .= "<th style='width:20px;'>".$plabel_qty."</th>";
 		$message .= "<th align='right'>".$plabel_total."</th>";                          
 		$message .= "</tr></thead><tbody>"; 
-		     
+		
+		foreach($json as $value){
+			$product = $this->db->where('kp.id', $value->id)->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
+				from kt_product as kp
+				left join kt_define_data_type as kdt on (kp.unit = kdt.id)")->row();
+			
+			if($this->session['language'] == 'english'){
+				$productName = $product->name_en." ".$product->volumn." ".$product->unittype;
+			}else{
+				$productName = $product->name_th." ".$product->volumn." ".$product->unittype;
+			}
+    		if($product->image == ''){
+    			$image = base_url('pimage/').'no_image.jpg';
+    		}else{
+    			$image = base_url('pimage/').'large/'.$product->image;
+    		}
+			
+			$message .= "<tr>";
+			$message .= "<td><img alt='".$productName."' style='width: 60px; height: 40px;' src='".$image."'></td>";
+			$message .= "<td>".$product->barcode."</th>";  
+			$message .= "<td>".$productName."</th>";  
+			$message .= "<td align='center'>".$value->price."</td>";  
+			$message .= "<td align='center' style='width:20px;'>".$value->qty."</td>";  
+			$message .= "<td align='right'>".$value->total." ".$plabel_baht."</td>";   
+			$message .= "</tr>";     
+		}
+		//var_dump($message);
+		$message .= "<tr>";
+		$message .= "<td colspan='4' align='right'>".$plabel_subtotal."</td>";
+		$message .= "<td colspan='2' align='right'>".$aDetail['subtotal']." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "<tr>";
+		$message .= "<td colspan='4' align='right'>".$plabel_shipprice."</td>";
+		$message .= "<td colspan='2' align='right'>".$aDetail['shipprice']." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "<tr>";
+		$message .= "<td colspan='4' align='right'>".$plabel_grandtotal."</td>";
+		$message .= "<td colspan='2' align='right'>".$aDetail['grandtotal']." ".$plabel_baht."</td>";
+		$message .= "</tr>";
+		$message .= "</tbody></table>";
+		$message .= "<br><br>";
+		$message .= "<a href='".base_url()."excel/pdf/".$orderid."/".$aDetail['email']."'>".$email_document."</a>";
+		$message .= "<br><br>";
+		
+		$payment = $this->db->query("SELECT * FROM kt_define_data_type WHERE id = '{$aDetail['payment_id']}'")->row();
+		$message .= $payment->description."<br><br>";
+		$message .= $email_payment_tell;
+		$message .= "<br><br>";
+		$message .= $email_end;
+		
+		return $message;
 	}
 	
 	public function countProduct(){
