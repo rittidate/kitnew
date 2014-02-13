@@ -665,7 +665,6 @@ class Processajax extends Main_Controller {
        	$this->db->insert('kt_order', $insert_order);
 		$order_id = $this->db->insert_id();
 		
-               
 		foreach($json as $value){
 			$product = $this->db->query("select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unittype, kp.unit as unit,  kp.price, kp.weight, kp.image
 				from kt_product as kp
@@ -690,8 +689,14 @@ class Processajax extends Main_Controller {
 			);
 			$this->db->insert('kt_orderdetail', $insert_orderDetail);
 		}
+
 		$message = $this->orderEmailMessage($order_id, $aDetail, $json);
 		$this->sendEmailOrder($email, $order_id, $message);
+		
+		if($email !== "arraieot@gmail.com"){
+			//send mail to me
+			$this->sendEmailOrder("arraieot@gmail.com", $order_id, $message);
+		}
 		
 		unset($this->session['cart']);
 		
@@ -815,7 +820,7 @@ class Processajax extends Main_Controller {
 			$message .= "<td align='right'>".$value->total." ".$plabel_baht."</td>";   
 			$message .= "</tr>";     
 		}
-		//var_dump($message);
+
 		$message .= "<tr>";
 		$message .= "<td colspan='4' align='right'>".$plabel_subtotal."</td>";
 		$message .= "<td colspan='2' align='right'>".$aDetail['subtotal']." ".$plabel_baht."</td>";

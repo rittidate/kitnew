@@ -28,3 +28,7 @@ $config['smtp_port'] = 587;
 $config['smtp_user'] = $_SERVER['SENDGRID_USERNAME'];
 $config['smtp_pass'] = $_SERVER['SENDGRID_PASSWORD'];
 */
+
+$config['charset'] = 'utf-8';
+$config['wordwrap'] = TRUE;
+$config['mailtype'] = 'html';
