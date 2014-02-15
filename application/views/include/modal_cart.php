@@ -963,6 +963,8 @@ function queryProduct(){
     
     this.menuStepEvent = function(){
     	$(".menuStep3Click").click(function(){
+    		$(".menuStep3 li").removeClass("active");
+    		$(this).parent("li").addClass("active");
             var id = $(this).data('id');
             thisClass.step = 3;
             thisClass.menuid = id;

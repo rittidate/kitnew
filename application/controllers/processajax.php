@@ -269,7 +269,7 @@ class Processajax extends Main_Controller {
 		
 		if(empty($step) && empty($menuid) && empty($keyword)){
 			$order = "order by kpv.view desc";
-			$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+			$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit_en, kdt.description as unit_th, kp.price, kps.pstock as stock, kp.weight, kp.image
 				from kt_product as kp
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
@@ -282,7 +282,7 @@ class Processajax extends Main_Controller {
 				$order = "order by kp.name_en desc";
 			}
 			
-		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit_en, kdt.description as unit_th, kp.price, kps.pstock as stock, kp.weight, kp.image
 				from kt_product as kp
 				left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 				left join kt_product_stock as kps on (kp.id = kps.pid) 
@@ -298,11 +298,12 @@ class Processajax extends Main_Controller {
             $response->rows[$i]['barcode'] = $row->barcode;
             if($this->session['language'] == 'english'){
             	$response->rows[$i]['name'] = $row->name_en;
+				$response->rows[$i]['unit'] = $row->unit_en;
 			}else if($this->session['language'] == 'thailand'){
             	$response->rows[$i]['name'] = $row->name_th;
+            	$response->rows[$i]['unit'] = $row->unit_th;
             }
             $response->rows[$i]['volumn'] = $row->volumn;
-            $response->rows[$i]['unit'] = $row->unit;
 			$response->rows[$i]['image'] = $row->image;
             $response->rows[$i]['price'] = $row->price;
             $response->rows[$i]['stock'] = intval($row->stock);
@@ -333,7 +334,7 @@ class Processajax extends Main_Controller {
 			 $i=0;
 			 foreach ($json as $key => $value) {
 			 	$where = "and kp.id = {$value->id}";
-		 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit, kp.price, kps.pstock as stock, kp.weight, kp.image
+		 		$SQL = "select kp.id as pid, kp.barcode, kp.name_en, kp.name_th, kp.volumn, kdt.data_type_name as unit_en, kdt.description as unit_th, kp.price, kps.pstock as stock, kp.weight, kp.image
 					from kt_product as kp
 					left join kt_define_data_type as kdt on (kp.unit = kdt.id)
 					left join kt_product_stock as kps on (kp.id = kps.pid) 
@@ -346,8 +347,10 @@ class Processajax extends Main_Controller {
 			            $response->rows[$i]['barcode'] = $row->barcode;
 			            if($this->session['language'] == 'english'){
 			            	$response->rows[$i]['name'] = $row->name_en;
+							$response->rows[$i]['unit'] = $row->unit_en;
 						}else if($this->session['language'] == 'thailand'){
 			            	$response->rows[$i]['name'] = $row->name_th;
+			            	$response->rows[$i]['unit'] = $row->unit_th;
 			            }
 			            $response->rows[$i]['volumn'] = $row->volumn;
 			            $response->rows[$i]['unit'] = $row->unit;

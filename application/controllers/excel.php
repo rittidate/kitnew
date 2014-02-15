@@ -124,24 +124,6 @@ class Excel extends Main_Controller {
 		$this->setStyle($activeSheet,array('A'.$endCredit, 'F'.$endCredit), $label->order_end, $style->aStyleDetailLabelLeft);
 		$this->setStyle($activeSheet,array('I'.$endCredit, 'N'.$endCredit), $label->order_payment_tell, $style->aStyleDetailLabel);
 		
-		/*
-		$message .= $label_address1." ".$aDetail['address1']."<br>";
-		$message .= $label_address2." ".$aDetail['address2']." ".$label_address3." ".$aDetail['address3']." ".$label_address4." ".$aDetail['address4']."<br>";
-		$message .= $label_city." ".$aDetail['city']." ".$label_state." ".$aDetail['state']." ".$label_zipcode." ".$aDetail['zipcode']." ".$label_country." ".$aDetail['country']."<br>";
-		$message .= $label_mobile." ".$aDetail['mobile']." ".$label_telephone." ".$aDetail['telephone']." ".$label_ext." ".$aDetail['telephone_ext']." ".$label_fax." ".$aDetail['fax']." ".$label_ext." ".$aDetail['fax_ext'];
-		$message .= "</td></tr>";
-		$message .= "</tbody></table>";
-		$message .= "<br><br>";
-		$message .= "<table class='Table'><thead><tr>";
-		$message .= "<th>".$plabel_image."</th>";    
-		$message .= "<th>".$plabel_barcode."</th>";  
-		$message .= "<th>".$plabel_product."</th>";  
-		$message .= "<th>".$plabel_price."</th>";  
-		$message .= "<th style='width:20px;'>".$plabel_qty."</th>";
-		$message .= "<th align='right'>".$plabel_total."</th>";                          
-		$message .= "</tr></thead><tbody>"; 
-		 * 
-		 */
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
 		$this->ex->setActiveSheetIndex(0);
 
