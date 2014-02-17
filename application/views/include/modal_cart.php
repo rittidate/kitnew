@@ -385,7 +385,7 @@ function queryProduct(){
 	            		}else{
 	            			volumn = val.volumn;
 	            		}
-	            		if(val.image == ''){
+	            		if(val.image == '' || val.image == null){
 	            			image = 'no_image.jpg';
 	            		}else{
 	            			image = 'large/'+val.image;
