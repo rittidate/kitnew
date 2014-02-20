@@ -9,10 +9,10 @@
       </div>
       <div class="modal-body">
       	<div id="map_canvas" class="span12">
+			<!--
 			<iframe width="100%" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.co.th/maps/ms?msa=0&amp;msid=202489725266689912522.0004a6c2f331c684d3f0d&amp;ie=UTF8&amp;ll=13.695276,100.421777&amp;spn=0.005003,0.006866&amp;z=17&amp;iwloc=0004a6c2f665e2ea790c2&amp;output=embed"></iframe>
-			<br />
-			 <a href="http://maps.google.co.th/maps/ms?msa=0&amp;msid=202489725266689912522.0004a6c2f331c684d3f0d&amp;ie=UTF8&amp;ll=13.695276,100.421777&amp;spn=0.005003,0.006866&amp;z=17&amp;iwloc=0004a6c2f665e2ea790c2&amp;source=embed" class="btn btn-info">View Full Map</a> 
-
+			-->
+			<iframe src="https://mapsengine.google.com/map/embed?mid=zMqrdkbJZvwA.kQRJMfq59tZM" width="100%" height="500"></iframe>
 		</div>
       </div>
     </div><!-- /.modal-content -->

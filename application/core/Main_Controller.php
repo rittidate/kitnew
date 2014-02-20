@@ -47,7 +47,7 @@ class Main_Controller extends MY_Controller
     {
        $query = $this->db->having('ocid', $this->viewerId)->get('kt_session');
        if($query->num_rows == 0){
-           $this->session['language'] = "english";
+           $this->session['language'] = "thailand";
            $data = array(
                 'ocid' => $this->viewerId,
                 'sessiondata' => serialize($this->session),
@@ -330,9 +330,9 @@ class Main_Controller extends MY_Controller
 
     public function sidebarMenu()
     {
-        $SQL = "select name, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null
+        $SQL = "select name, name_th, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null
                 union
-                select name, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
+                select name, name_th, id, parentid from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
                 and parentid in (select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null)";
 
         $result = $this->db->query($SQL)->result();
@@ -340,10 +340,21 @@ class Main_Controller extends MY_Controller
         foreach($result as $row){
             if($row->parentid == ""){
                 $data['root'][$row->id]['id'] = $row->id;
-                $data['root'][$row->id]['name'] = $row->name;
+		        if($this->session['language'] == 'english'){
+		            $data['root'][$row->id]['name'] = $row->name;
+		        }else if($this->session['language'] == 'thailand'){
+   	            	$data['root'][$row->id]['name'] = $row->name_th;
+		        }
+				
+                
             }else{
                 $data['parent'][$row->parentid][$row->id]['id'] = $row->id;
-                $data['parent'][$row->parentid][$row->id]['name'] = $row->name;
+		        if($this->session['language'] == 'english'){
+		            $data['parent'][$row->parentid][$row->id]['name'] = $row->name;
+		        }else if($this->session['language'] == 'thailand'){
+   	            	$data['parent'][$row->parentid][$row->id]['name'] = $row->name_th;
+		        }
+                
                 $data['parent'][$row->parentid][$row->id]['count'] = $this->db->select('*')->from('kt_menu_product')->where('parentid', $row->id)->where('is_active', 'Y')->where('is_delete', 'N')->count_all_results();
             }
         }

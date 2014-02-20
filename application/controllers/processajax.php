@@ -151,14 +151,20 @@ class Processajax extends Main_Controller {
     public function buildMenuStep2(){
         $id = $_REQUEST['id'];
 
-        $SQL = "select name, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
+        $SQL = "select name, name_th, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
                 and parentid in (select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y' and parentid is null) order by name";
         $result = $this->db->query($SQL)->result();
         $data = array();
         $i=0;
         foreach($result as $value){
             $response->rows[$i]['id']= $value->id;
-            $response->rows[$i]['name']= $value->name;
+	        if($this->session['language'] == 'english'){
+	        	$response->rows[$i]['name']= $value->name;
+	        }else if($this->session['language'] == 'thailand'){
+            	$response->rows[$i]['name']= $value->name_th;
+	        }
+                
+            
             $i++;
         }
 
@@ -168,7 +174,7 @@ class Processajax extends Main_Controller {
     public function buildMenuStep3(){
         $id = $_REQUEST['id'];
 
-        $SQL = "select name, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
+        $SQL = "select name, name_th, id, parentid from kt_menu_product WHERE parentid='{$id}' and is_delete = 'N' and is_active = 'Y'
                 and parentid in ( select id from kt_menu_product WHERE is_delete = 'N' and is_active = 'Y'
                     and parentid in (select id from kt_menu_product  WHERE is_delete = 'N'  and is_active = 'Y' and parentid is null) )
                 order by name";
@@ -177,7 +183,11 @@ class Processajax extends Main_Controller {
         $i=0;
         foreach($result as $value){
             $response->rows[$i]['id']= $value->id;
-            $response->rows[$i]['name']= $value->name;
+	        if($this->session['language'] == 'english'){
+	        	$response->rows[$i]['name']= $value->name;
+	        }else if($this->session['language'] == 'thailand'){
+            	$response->rows[$i]['name']= $value->name_th;
+	        }
             $i++;
         }
 

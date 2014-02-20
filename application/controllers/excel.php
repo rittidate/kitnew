@@ -21,7 +21,6 @@ class Excel extends Main_Controller {
 		//name the worksheet
 		// Create new PHPExcel object
 		$activeSheet = $this->ex->getActiveSheet();
-		//$FontColor = new PHPExcel_Style_Color();
 
 		$filename = 'Order_reciept_No'.$orderid;
 		// Set document properties
@@ -141,7 +140,6 @@ class Excel extends Main_Controller {
 	    $objWriter = PHPExcel_IOFactory::createWriter($this->ex, 'PDF');
 	    $objWriter->save('php://output');
 
-		
 		exit;
 
 	}
