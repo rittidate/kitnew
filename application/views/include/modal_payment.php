@@ -85,7 +85,7 @@ function modelPayment(){
         var url = urlini+ 'savePayment';
 
         odata = thisClass.oData(odata);
-        $.post(url,odata,
+        $.getJSON(url,odata,
                 function(result){
                     if(result.status == "success")
                         $('#paymentModal').modal('hide')

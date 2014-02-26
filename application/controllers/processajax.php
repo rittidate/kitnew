@@ -884,7 +884,7 @@ class Processajax extends Main_Controller {
                     $SQL = "INSERT INTO kt_payment (order_id, payment_date, payment_id, grandtotal) VALUES ('{$payment_order}', '{$payment_date}', '{$payment_select}', '{$payment_grandtotal}')";
                     $result = $this->db->query($SQL);
                     $message = $this->paymentEmailMessage($payment_order, $payment_date, $payment_select, $payment_grandtotal);
-                    $this->sendEmailPayment($payment_order, $message);
+                    //$this->sendEmailPayment($payment_order, $message);
                     $response->status = 'success';
                 }else{
                     $response->status = 'error';
@@ -944,6 +944,7 @@ class Processajax extends Main_Controller {
                     $this->load->library('email');
                     $this->email->from('arraieot@gmail.com');
                     $this->email->to($order->email);
+                    $this->email->cc('arraieot@gmail.com');
                     $this->email->subject($email_header.$orderid);
                     $this->email->message($message);
                     $this->email->send();
