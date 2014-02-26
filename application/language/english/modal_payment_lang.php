@@ -6,4 +6,6 @@ $lang['payment_date'] = "Payment Date";
 $lang['payment_time'] = "Payment Time";
 $lang['payment_hour'] = "hour";
 $lang['payment_minute'] = "minute";
+$lang['payment_grandtotal'] = "Grand Total";
+$lang['payment_email_header'] = "[KITTIVATE.COM] Payment Confirm Order Id.";
 ?>

@@ -872,17 +872,82 @@ class Processajax extends Main_Controller {
 		$payment_minute = $_REQUEST['payment_minute'];
 		$payment_order = $_REQUEST['payment_order'];
 		$payment_select = $_REQUEST['payment_select'];
+                $payment_grandtotal = $_REQUEST['payment_grandtotal'];
+
+                list($d, $m, $y) = explode('/', $payment_date);
+                $mk=mktime($payment_hour, $payment_minute, 0, $m, $d, $y);
+                $payment_date=strftime('%Y-%m-%d %H:%M:%S',$mk);
+
+                $count = $this->db->select('*')->from('kt_payment')->where('payment_date', $payment_date)->where('order_id', $payment_order)->where('grandtotal', $payment_grandtotal)->count_all_results();
+
+                if($count == 0){
+                    $SQL = "INSERT INTO kt_payment (order_id, payment_date, payment_id, grandtotal) VALUES ('{$payment_order}', '{$payment_date}', '{$payment_select}', '{$payment_grandtotal}')";
+                    $result = $this->db->query($SQL);
+                    $message = $this->paymentEmailMessage($payment_order, $payment_date, $payment_select, $payment_grandtotal);
+                    $this->sendEmailPayment($payment_order, $message);
+                    $response->status = 'success';
+                }else{
+                    $response->status = 'error';
+                }
+                echo json_encode($response);
+	}
+
+        private function paymentEmailMessage($orderid = '', $date = '', $payment = '', $total = ''){
+		$this->lang->load('email', $this->session['language']);
+		$email_end = $this->lang->line("email_end");
+
+                $this->lang->load('modal_payment', $this->session['language']);
+		$email_header = $this->lang->line("payment_email_header");
+                $payment_order_number = $this->lang->line("payment_order_number");
+                $payment_select = $this->lang->line("payment_select");
+                $payment_date = $this->lang->line("payment_date");
+                $payment_grandtotal = $this->lang->line("payment_grandtotal");
+
+		$message = '';
+
+		$message .= $email_header.$orderid."<br><br>";
+		$message .= "<br><br>";
+                $message .= "<table><tbody>";
+		$message .= "<tr><td>";
+                $message .= $payment_order_number;
+                $message .= "</td><td>";
+                $message .= $orderid;
+                $message .= "</td></tr>";
+		$message .= "<tr><td>";
+                $message .= $payment_select;
+                $message .= "</td><td>";
+                $payment = $this->db->where('id', $payment )->get('kt_define_data_type')->row();
+                $message .= $payment->description;
+                $message .= "</td></tr>";
+                $message .= "<tr><td>";
+                $message .= $payment_date;
+                $message .= "</td><td>";
+                $message .= $date;
+                $message .= "</td></tr>";
+                $message .= "<tr><td>";
+                $message .= $payment_grandtotal;
+                $message .= "</td><td>";
+                $message .= $total;
+                $message .= "</td></tr>";
+                $message .= "</tbody></table>";
+                $message .= "<br><br>";
+		$message .= $email_end;
+
+		return $message;
 	}
 	
-	public function sendEmailPayment($email = '', $orderid = '', $message = ''){
-		$this->lang->load('email', $this->session['language']);
-		$email_header = $this->lang->line("email_header");
-		$this->load->library('email');
-		$this->email->from('arraieot@gmail.com');
-		$this->email->to($email);
-		$this->email->subject($email_header.$orderid);
-		$this->email->message($message);
-		$this->email->send();
+	public function sendEmailPayment($orderid = '', $message = ''){
+                $order = $this->db->where('id', $orderid )->get('kt_order')->row();
+                if(!empty($order)){
+                    $this->lang->load('modal_payment', $this->session['language']);
+                    $email_header = $this->lang->line("payment_email_header");
+                    $this->load->library('email');
+                    $this->email->from('arraieot@gmail.com');
+                    $this->email->to($order->email);
+                    $this->email->subject($email_header.$orderid);
+                    $this->email->message($message);
+                    $this->email->send();
+                }
 	}
     
 }

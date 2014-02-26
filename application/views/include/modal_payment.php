@@ -22,6 +22,13 @@
                 	<?php echo $payment_input_select; ?>                	
                 </div>
             </div>
+
+            <div class="form-group">
+               	<label for="payment_grandtotal" class="col-sm-5 control-label text-right"><?php echo $payment_grandtotal; ?></label>
+                <div class="col-sm-6">
+                	<input type="text" name="payment_grandtotal" class="form-control col-md-8" id="payment_grandtotal" placeholder="<?php echo $payment_grandtotal; ?>">
+                </div>
+            </div>
             
             <div class="form-group">
                	<label for="payment_date" class="col-sm-5 control-label text-right"><?php echo $payment_date; ?></label>
@@ -80,7 +87,12 @@ function modelPayment(){
         odata = thisClass.oData(odata);
         $.post(url,odata,
                 function(result){
-                    $('#paymentModal').modal('hide')
+                    if(result.status == "success")
+                        $('#paymentModal').modal('hide')
+                    else{
+                        $('<label class="error" for="payment_order">This payment already send data!!!</label>').insertAfter('#payment_order');
+                    }
+
                 });
 
     }
@@ -124,9 +136,13 @@ function modelPayment(){
 		      	required: true,
 		      	number: true,
 		      },
-              payment_select:{
+                      payment_grandtotal:{
 		      	required: true,
+                        number: true,
 		      },
+                      payment_date:{
+                        required: true,
+                      }
 		    },
 			 invalidHandler: function(event, validator) {
 			// 'this' refers to the form

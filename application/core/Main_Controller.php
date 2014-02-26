@@ -334,6 +334,7 @@ class Main_Controller extends MY_Controller
 		$data["payment_time"] = $this->lang->line("payment_time");
 		$data["payment_hour"] = $this->lang->line("payment_hour");
 		$data["payment_minute"] = $this->lang->line("payment_minute");
+                $data["payment_grandtotal"] = $this->lang->line("payment_grandtotal");
 		
 		$data["payment_input_select"] = form_dropdown('payment_select', $this->kv->getPayment(),'', 'class="form-control" id="payment_select"');
 		$data["payment_input_time_hour"] = form_dropdown('payment_hour', $this->kv->getHour(), date("H"), 'class="form-control" id="payment_hour"');

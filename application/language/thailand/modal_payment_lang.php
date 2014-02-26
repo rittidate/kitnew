@@ -6,4 +6,6 @@ $lang['payment_date'] = "วันที่ชำระเงิน";
 $lang['payment_time'] = "เวลาชำระเงิน";
 $lang['payment_hour'] = "นาฬิกา";
 $lang['payment_minute'] = "นาที";
+$lang['payment_grandtotal'] = "เป็นเงินทั้งหมด";
+$lang['payment_email_header'] = "[KITTIVATE.COM] ยืนยันการแจ้งชำระเงิน ใบสั่งสินค้าหมายเลข.";
 ?>
