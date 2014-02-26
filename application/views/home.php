@@ -2,6 +2,12 @@
         $(document).ready(function() {
                 var qp = new queryProduct();
                 qp.productFirstQuery();
+                
+                $(".navbar-nav li").hover(function(){
+                	$(this).addClass("active");
+                }, function(){
+                	$(this).removeClass("active");
+                });
         });
 </script>
 

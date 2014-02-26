@@ -13,7 +13,8 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="<?php echo base_url(); ?>"><?php echo $home; ?></a></li>
+            <li><a href="<?php echo base_url(); ?>"><?php echo $home; ?></a></li>
+            <li><a href="#" data-toggle="modal" data-target="#paymentModal"><?php echo $payment; ?></a></li>
             <!--
             <li><a href="#about"><?php echo $about; ?></a></li>
             <li><a href="#contact">Contact</a></li>

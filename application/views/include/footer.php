@@ -16,6 +16,11 @@
             $('#ship_birth').datepicker({
             	format: 'yyyy-mm-dd'
             });
+            
+                        
+            $('#payment_date').datepicker({
+            	format: 'dd/mm/yyyy'
+            });
         });
 </script>
 </body>

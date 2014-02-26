@@ -865,5 +865,24 @@ class Processajax extends Main_Controller {
 		$SQL = "INSERT INTO kt_product_view (pid,view) VALUES ({$id}, 1) ON DUPLICATE KEY UPDATE view=view+1";
 		$result = $this->db->query($SQL);
 	}
+	
+	public function savePayment(){
+		$payment_date = $_REQUEST['payment_date'];
+		$payment_hour = $_REQUEST['payment_hour'];
+		$payment_minute = $_REQUEST['payment_minute'];
+		$payment_order = $_REQUEST['payment_order'];
+		$payment_select = $_REQUEST['payment_select'];
+	}
+	
+	public function sendEmailPayment($email = '', $orderid = '', $message = ''){
+		$this->lang->load('email', $this->session['language']);
+		$email_header = $this->lang->line("email_header");
+		$this->load->library('email');
+		$this->email->from('arraieot@gmail.com');
+		$this->email->to($email);
+		$this->email->subject($email_header.$orderid);
+		$this->email->message($message);
+		$this->email->send();
+	}
     
 }

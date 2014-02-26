@@ -53,4 +53,40 @@ class Kv {
        return $array;
    }
 
+    public function getPayment()
+   {
+       $array = array();
+       $result = $this->ci->db->select(array('data_type_name', 'id'))
+	   		   ->where('data_type_name !=', 'เงินสด')
+	   		   ->where('ref_data_type', 'PAYMENT_TYPE')
+               ->where('is_active', 'Y')
+               ->where('is_delete', 'N')
+               ->get('kt_define_data_type')->result();
+       foreach($result as $value)
+       {
+           $array[$value->id] = $value->data_type_name;
+       }
+       return $array;
+   }
+   
+   public function getHour()
+   {
+       $array = array();
+       for($i=0; $i<=23;$i++)
+       {
+           $array[$i] = $i;
+       }
+       return $array;
+   }
+   
+   public function getMinute()
+   {
+       $array = array();
+       for($i=0; $i<=59;$i++)
+       {
+           $array[$i] = $i;
+       }
+       return $array;
+   }
+
 }

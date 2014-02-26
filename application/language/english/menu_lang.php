@@ -7,4 +7,5 @@ $lang['order'] = "Order";
 $lang['cart'] = "Cart";
 $lang['config'] = "Config";
 $lang['logout'] = "Log Out";
+$lang['payment'] = "Payment";
 ?>

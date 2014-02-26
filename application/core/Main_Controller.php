@@ -91,6 +91,7 @@ class Main_Controller extends MY_Controller
         $this->sidebarMenu();
 		$this->modalImage();
 		$this->modalMap();
+		$this->modalPayment();
     }
 
     private function headerMain()
@@ -114,6 +115,7 @@ class Main_Controller extends MY_Controller
         $data["order"] = $this->lang->line("order");
         $data["cart"] = $this->lang->line("cart");
         $data["config"] = $this->lang->line("config");
+		$data["payment"] = $this->lang->line("payment");
         $data["profile"] = '';
         $data["logout"] = '';
 
@@ -316,6 +318,27 @@ class Main_Controller extends MY_Controller
 	private function modalImage()
 	{
 		$this->load->view('include/modal_image');
+	}
+	
+	private function modalPayment()
+	{
+		$this->lang->load('modal_user', $this->session['language']);
+		$data["label_submit"] = $this->lang->line("label_submit");
+		$data["label_close"] = $this->lang->line("label_close");
+		
+		$this->lang->load('modal_payment', $this->session['language']);
+		$data["payment_head"] = $this->lang->line("payment_head");
+		$data["payment_order_number"] = $this->lang->line("payment_order_number");
+		$data["payment_select"] = $this->lang->line("payment_select");
+		$data["payment_date"] = $this->lang->line("payment_date");
+		$data["payment_time"] = $this->lang->line("payment_time");
+		$data["payment_hour"] = $this->lang->line("payment_hour");
+		$data["payment_minute"] = $this->lang->line("payment_minute");
+		
+		$data["payment_input_select"] = form_dropdown('payment_select', $this->kv->getPayment(),'', 'class="form-control" id="payment_select"');
+		$data["payment_input_time_hour"] = form_dropdown('payment_hour', $this->kv->getHour(), date("H"), 'class="form-control" id="payment_hour"');
+		$data["payment_input_time_minute"] = form_dropdown('payment_minute', $this->kv->getMinute(), date("i"), 'class="form-control" id="payment_minute"');
+		$this->load->view('include/modal_payment', $data);
 	}
 	
 	private function modalMap()
