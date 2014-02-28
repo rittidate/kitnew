@@ -706,11 +706,6 @@ class Processajax extends Main_Controller {
 		$message = $this->orderEmailMessage($order_id, $aDetail, $json);
 		$this->sendEmailOrder($email, $order_id, $message);
 		
-		if($email !== "arraieot@gmail.com"){
-			//send mail to me
-			$this->sendEmailOrder("arraieot@gmail.com", $order_id, $message);
-		}
-		
 		unset($this->session['cart']);
 		
 		if(empty($this->session['order'])){
@@ -737,9 +732,22 @@ class Processajax extends Main_Controller {
 		$this->load->library('email');
 		$this->email->from('arraieot@gmail.com');
 		$this->email->to($email);
+		if($email !== "arraieot@gmail.com"){
+			$this->email->cc('arraieot@gmail.com');
+		}
 		$this->email->subject($email_header.$orderid);
 		$this->email->message($message);
 		$this->email->send();
+		
+		$insert_order_status_email = array(
+			'order_id' => $orderid,
+			'order_status' => 10,
+			'email_send' => date('Y-m-d H:i:s'),
+        	'is_active' => 'Y',
+        	'is_delete' => 'N',
+        	'create_date' => date('Y-m-d H:i:s')
+		);
+		$this->db->insert('kt_order_status_email', $insert_order_status_email);
 	}
 	
 	private function orderEmailMessage($orderid = '', $aDetail = array(), $json = array()){
@@ -892,7 +900,7 @@ class Processajax extends Main_Controller {
                 echo json_encode($response);
 	}
 
-        private function paymentEmailMessage($orderid = '', $date = '', $payment = '', $total = ''){
+    private function paymentEmailMessage($orderid = '', $date = '', $payment = '', $total = ''){
 		$this->lang->load('email', $this->session['language']);
 		$email_end = $this->lang->line("email_end");
 
@@ -937,18 +945,35 @@ class Processajax extends Main_Controller {
 	}
 	
 	public function sendEmailPayment($orderid = '', $message = ''){
-                $order = $this->db->where('id', $orderid )->get('kt_order')->row();
-                if(!empty($order)){
-                    $this->lang->load('modal_payment', $this->session['language']);
-                    $email_header = $this->lang->line("payment_email_header");
-                    $this->load->library('email');
-                    $this->email->from('arraieot@gmail.com');
-                    $this->email->to($order->email);
-                    $this->email->cc('arraieot@gmail.com');
-                    $this->email->subject($email_header.$orderid);
-                    $this->email->message($message);
-                    $this->email->send();
-                }
+        $order = $this->db->where('id', $orderid )->get('kt_order')->row();
+        if(!empty($order)){
+            $this->lang->load('modal_payment', $this->session['language']);
+            $email_header = $this->lang->line("payment_email_header");
+            $this->load->library('email');
+            $this->email->from('arraieot@gmail.com');
+            $this->email->to($order->email);
+            $this->email->cc('arraieot@gmail.com');
+            $this->email->subject($email_header.$orderid);
+            $this->email->message($message);
+            $this->email->send();
+			
+			$insert_order_status_email = array(
+				'order_id' => $orderid,
+				'order_status' => 11,
+				'email_send' => date('Y-m-d H:i:s'),
+	        	'is_active' => 'Y',
+	        	'is_delete' => 'N',
+	        	'create_date' => date('Y-m-d H:i:s')
+			);
+			$this->db->insert('kt_order_status_email', $insert_order_status_email);
+			
+			$update_order = array(
+				'order_status' => 11,
+	        	'update_date' => date('Y-m-d H:i:s')
+			);
+			$this->db->update('kt_order', $update_order, array('id' => $orderid));
+
+        }
 	}
     
 }
