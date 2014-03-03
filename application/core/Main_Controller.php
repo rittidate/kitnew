@@ -85,6 +85,7 @@ class Main_Controller extends MY_Controller
     public function loadHeader()
     {
         $this->headerMain();
+        $this->analyticRecord();
         $this->navbarMenu();
         $this->modalHeaderMenu();
         $this->advertiserMain();
@@ -97,6 +98,11 @@ class Main_Controller extends MY_Controller
     private function headerMain()
     {
             $this->load->view('include/header');
+    }
+
+    private function analyticRecord()
+    {
+        $this->load->view('include/analytic');
     }
 
     public function navbarMenu()

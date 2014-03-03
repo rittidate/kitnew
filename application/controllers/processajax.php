@@ -190,8 +190,8 @@ class Processajax extends Main_Controller {
 	        }
             $i++;
         }
-
-        echo json_encode($response);
+        if(!empty($response))
+            echo json_encode($response);
     }
 	
     public function getProduct(){

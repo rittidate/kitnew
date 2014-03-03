@@ -1,8 +1,13 @@
 <script>
         $(document).ready(function() {
                 var qp = new queryProduct();
-                qp.productFirstQuery();
-                
+                <?php if(empty($step) && empty ($pmenu)){ ?>
+                    qp.productFirstQuery();
+                <?php }else if($step == 1){ ?>
+                    qp.productFirstStep1(<?php echo $pmenu; ?>);
+                <?php }else if($step > 1){ ?>
+                    qp.productFirstStep2(<?php echo $step; ?>, <?php echo $pmenu; ?>);
+                <?php } ?>
                 $(".navbar-nav li").hover(function(){
                 	$(this).addClass("active");
                 }, function(){

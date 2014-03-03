@@ -300,12 +300,13 @@ function queryProduct(){
     var formId = $("#shipModalForm");
     thisClass.limitPage = 5;
     
-    this.buildMenuStep3Click = function(){
+    this.buildMenuStep3Click = function(id){
     	var html = '';
     	$(".menuStep3 li").remove();
+        html += '<li class="active"><a data-toggle="tab" class="menuStep2Click" data-id="'+id+'" href="#">ALL</a></li>';
         $.each(thisClass.buildMenuStep3Obj, function(ini, val){
         	if(ini == 0){
-             	html += '<li class="active"><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
+             	html += '<li class=""><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
             }else{
             	html += '<li class=""><a data-toggle="tab" class="menuStep3Click" data-id="'+val.id+'" href="#">'+val.name+'</a></li>';
             }
@@ -354,7 +355,7 @@ function queryProduct(){
             	if(result.rows != null){
             		thisClass.buildMenuStep3Obj = result.rows;
             		thisClass.buildMenuStep3Select();
-            		thisClass.buildMenuStep3Click();
+            		thisClass.buildMenuStep3Click(thisClass.menuid);
             	}
         });
     }
@@ -962,9 +963,21 @@ function queryProduct(){
 	} 
     
     this.menuStepEvent = function(){
+        $(".menuStep2Click").click(function(){
+            $(".menuStep3 li").removeClass("active");
+            $(this).parent("li").addClass("active");
+            var id = $(this).data('id');
+            thisClass.step = 2;
+            thisClass.menuid = id;
+            thisClass.pageSelect = 1;
+            thisClass.keyword = '';
+            thisClass.buildMenuStep3();
+            thisClass.getProduct();
+            return false;
+        });
     	$(".menuStep3Click").click(function(){
-    		$(".menuStep3 li").removeClass("active");
-    		$(this).parent("li").addClass("active");
+            $(".menuStep3 li").removeClass("active");
+            $(this).parent("li").addClass("active");
             var id = $(this).data('id');
             thisClass.step = 3;
             thisClass.menuid = id;
@@ -1200,6 +1213,25 @@ function queryProduct(){
     	thisClass.pageSelect = 1;
         thisClass.getProduct();
     }
+
+    this.productFirstStep1 = function(id){
+        thisClass.step = 1;
+        thisClass.menuid = id;
+        thisClass.pageSelect = 1;
+        thisClass.keyword = '';
+        thisClass.buildMenuStep2();
+        thisClass.getProduct();
+    }
+    
+    this.productFirstStep2 = function(step, id){
+        thisClass.step = step;
+        thisClass.menuid = id;
+        thisClass.pageSelect = 1;
+        thisClass.keyword = '';
+        thisClass.buildMenuStep3();
+        thisClass.getProduct();
+    }
+
 	
     this.iniControl = function(){
         $(".menuStep2Click").click(function(){
