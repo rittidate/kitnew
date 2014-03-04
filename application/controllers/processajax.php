@@ -363,7 +363,6 @@ class Processajax extends Main_Controller {
 			            	$response->rows[$i]['unit'] = $row->unit_th;
 			            }
 			            $response->rows[$i]['volumn'] = $row->volumn;
-			            $response->rows[$i]['unit'] = $row->unit;
 			            $response->rows[$i]['price'] = $row->price;
 			            $response->rows[$i]['stock'] = intval($row->stock);
 			            $response->rows[$i]['weight'] = $row->weight;

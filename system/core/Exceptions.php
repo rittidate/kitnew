@@ -103,6 +103,12 @@ class CI_Exceptions {
 	 */
 	function show_404($page = '', $log_error = TRUE)
 	{
+        //page not found redirect
+        $this->config =& get_config();
+        $base_url = $this->config['base_url'];
+		header( "location:".$base_url);
+		exit(0);
+		 
 		$heading = "404 Page Not Found";
 		$message = "The page you requested was not found.";
 
@@ -111,8 +117,9 @@ class CI_Exceptions {
 		{
 			log_message('error', '404 Page Not Found --> '.$page);
 		}
-
+		
 		echo $this->show_error($heading, $message, 'error_404', 404);
+
 		exit;
 	}
 
