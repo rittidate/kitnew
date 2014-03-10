@@ -885,13 +885,21 @@ class Processajax extends Main_Controller {
                 $mk=mktime($payment_hour, $payment_minute, 0, $m, $d, $y);
                 $payment_date=strftime('%Y-%m-%d %H:%M:%S',$mk);
 
-                $count = $this->db->select('*')->from('kt_payment')->where('is_active', 'Y')->where('order_id', $payment_order)->count_all_results();
+                $count = $this->db->select('*')->from('kt_payment')->where('is_active', 'Y')->where('is_delete', 'N')->where('order_id', $payment_order)->count_all_results();
 
                 if($count == 0){
                     $SQL = "INSERT INTO kt_payment (order_id, payment_date, payment_id, grandtotal) VALUES ('{$payment_order}', '{$payment_date}', '{$payment_select}', '{$payment_grandtotal}')";
                     $result = $this->db->query($SQL);
                     $message = $this->paymentEmailMessage($payment_order, $payment_date, $payment_select, $payment_grandtotal);
                     $this->sendEmailPayment($payment_order, $message);
+					
+					$update_order = array(
+						'order_status' => 12,
+			        	'update_date' => date('Y-m-d H:i:s')
+					);
+					
+					$this->db->update('kt_order', $update_order, array('id' => $payment_order));
+					
                     $response->status = 'success';
                 }else{
                     $response->status = 'error';
