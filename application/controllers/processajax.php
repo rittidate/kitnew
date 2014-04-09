@@ -585,7 +585,7 @@ class Processajax extends Main_Controller {
     	
     }
 
-	public function saveOrder(){
+    public function saveOrder(){
         $firstname = $_REQUEST['firstname'];
         $lastname = $_REQUEST['lastname'];
         //$birth = $_REQUEST['birth'];
