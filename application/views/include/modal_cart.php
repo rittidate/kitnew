@@ -963,7 +963,7 @@ function queryProduct(){
 	} 
     
     this.menuStepEvent = function(){
-        $(".menuStep2Click").click(function(){
+        $(".menuStep2Click").unbind('click').click(function(){
             $(".menuStep3 li").removeClass("active");
             $(this).parent("li").addClass("active");
             var id = $(this).data('id');
@@ -975,7 +975,7 @@ function queryProduct(){
             thisClass.getProduct();
             return false;
         });
-    	$(".menuStep3Click").click(function(){
+    	$(".menuStep3Click").unbind('click').click(function(){
             $(".menuStep3 li").removeClass("active");
             $(this).parent("li").addClass("active");
             var id = $(this).data('id');
