@@ -32,7 +32,7 @@ $config['base_url']	= 'http://www.kittivate.com';
 |
 */
 $config['cdn_url']	= 'http://asset.kittivate.com/kittivate/';
-//$config['cdn_url']	= 'http://asset.local/';
+//$config['cdn_url']	= 'http://kitnew.local/';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ $config['cdn_url']	= 'http://asset.kittivate.com/kittivate/';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
