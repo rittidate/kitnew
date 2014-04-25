@@ -23,7 +23,7 @@ class Listproduct extends Main_Controller {
         $result = $this->db->query($SQL)->result();
         if(count($result) > 0){
            $pid = $result[0]->id;
-           $SQL2 = "select id from kt_product_barcode_base as pdbb where pdbb.pid = '{$pid}' and  pdbb.mp_id = '{$mp_id}' and pdbb.barcode = '{$barcode}'";
+           $SQL2 = "select pdbb.pid from kt_product_barcode_base as pdbb where pdbb.pid = '{$pid}' and  pdbb.mp_id = '{$mp_id}' and pdbb.barcode = '{$barcode}'";
            $result2 = $this->db->query($SQL2)->result();
            if(count($result2) == 0){
                $data = array(
@@ -38,6 +38,18 @@ class Listproduct extends Main_Controller {
             echo $_GET['callback']."(".json_encode($arr).");";  // 09/01/12 corrected the statement
     }
 
+    public function localpaybydate($MP_ID, $BC_ID, $barcode, $qty, $price, $summary_date)
+    {
+//        $SQL = "select kp.id as pid from kt_product as kp where kp.barcode = '$barcode'";
+//        $result = $this->db->query($SQL)->result();
+//        foreach($result as $row){
+//           $pid = $row->pid;
+//
+//        }
+//        $arr = array($pid, $qty);
+        $arr['name'] = "response";
+        echo $_GET['callback']."(".json_encode($arr).");";  // 09/01/12 corrected the statement
+    }
 
 }
 

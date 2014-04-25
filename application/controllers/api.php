@@ -43,8 +43,8 @@ class Api extends REST_Controller {
 
     public function localstock($barcode, $qty)
     {
-                $SQL = "select kp.id as pid from kt_product as kp where kp.barcode = '$barcode'";
-                $result = $this->db->query($SQL)->result();
+        $SQL = "select kp.id as pid from kt_product as kp where kp.barcode = '$barcode'";
+        $result = $this->db->query($SQL)->result();
         foreach($result as $row){
            $pid = $row->pid;
 
