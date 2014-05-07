@@ -40,17 +40,32 @@ class Listproduct extends Main_Controller {
 
     public function localpaybydate($MP_ID, $BC_ID, $barcode, $qty, $price, $summary_date)
     {
-//        $SQL = "select kp.id as pid from kt_product as kp where kp.barcode = '$barcode'";
-//        $result = $this->db->query($SQL)->result();
-//        foreach($result as $row){
-//           $pid = $row->pid;
-//
-//        }
-//        $arr = array($pid, $qty);
+        $aWhere = array (
+            'MP_ID' => $MP_ID,
+            'BC_ID' => $BC_ID,
+            'barcode' => $barcode,
+            'qty' => $qty,
+            'price' => $price,
+            'summary_date' => $summary_date
+            );
+        $count = $this->db->select('*')->from('kt_summary_by_date')->where($aWhere)->count_all_results();
+        if($count == 0){
+            $result = $this->db->query("select id from kt_product where barcode = '{$barcode}' and is_delete = 'N'")->result();
+            $pid = $result[0]->id;
+            if(!empty($pid)){
+                $aWhere['pid'] = $pid;
+                $this->db->insert('kt_summary_by_date', $aWhere);
+                $this->updateStock($pid, $qty);
+            }
+        }
         $arr['name'] = "response";
         echo $_GET['callback']."(".json_encode($arr).");";  // 09/01/12 corrected the statement
     }
 
+    private function updateStock($pid,$qty){
+        $this->db->query("INSERT INTO kt_product_stock (pid, pstock) VALUES ({$pid},{$qty})
+                                    ON DUPLICATE KEY UPDATE pstock = pstock - {$qty}");
+    }
 }
 
 /* End of file frontpage.php */
