@@ -51,11 +51,13 @@ class Listproduct extends Main_Controller {
         $count = $this->db->select('*')->from('kt_summary_by_date')->where($aWhere)->count_all_results();
         if($count == 0){
             $result = $this->db->query("select id from kt_product where barcode = '{$barcode}' and is_delete = 'N'")->result();
-            $pid = $result[0]->id;
-            if(!empty($pid)){
-                $aWhere['pid'] = $pid;
-                $this->db->insert('kt_summary_by_date', $aWhere);
-                $this->updateStock($pid, $qty);
+            if(!empty($result[0])){
+                $pid = $result[0]->id;
+                if(!empty($pid)){
+                    $aWhere['pid'] = $pid;
+                    $this->db->insert('kt_summary_by_date', $aWhere);
+                    $this->updateStock($pid, $qty);
+                }
             }
         }
         $arr['name'] = "response";
